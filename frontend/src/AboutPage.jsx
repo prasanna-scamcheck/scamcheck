@@ -86,27 +86,28 @@ export function AboutPage() {
               Founder & Developer — CyberIntelEngine
             </div>
             <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: 16 }}>
-              A cybersecurity veteran with 30 years of experience, Prasanna currently serves as
-              CISO at Red Piranha — an Australian cybersecurity company and member of the Cyber Threat Alliance.
-              His career spans threat intelligence, security operations, penetration testing, and building
-              enterprise-grade security platforms.
+              A seasoned cybersecurity professional with extensive experience spanning threat intelligence,
+              security operations, risk governance, and compliance frameworks. Prasanna has spent his career
+              protecting organizations and individuals from evolving cyber threats across multiple domains
+              and industries.
             </div>
             <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: 16 }}>
-              Having witnessed millions of Indians fall victim to preventable cyber scams, Prasanna
-              built CyberIntelEngine to bridge the gap between cybersecurity expertise and everyday citizens.
-              The platform represents his conviction that the best defense against cybercrime is education
-              and awareness at the moment of decision — not after the damage is done.
+              Driven by the growing epidemic of cyber scams targeting Indian citizens, Prasanna built
+              CyberIntelEngine as an independent initiative to make cybersecurity intelligence accessible
+              to everyone — not just enterprises and security teams. The platform is his answer to a simple
+              question: why should ordinary people remain defenseless against scams that follow predictable,
+              preventable patterns?
             </div>
 
             {/* Credentials */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
               {[
-                "30 Years in Cybersecurity",
-                "CISO — Red Piranha",
+                "Cybersecurity Professional",
                 "Threat Intelligence",
                 "Security Operations",
-                "XDR & Zero Trust",
-                "Cyber Threat Alliance Member",
+                "Risk & Compliance",
+                "GRC Consulting",
+                "Independent Researcher",
               ].map(tag => (
                 <span key={tag} style={{
                   padding: "4px 12px", borderRadius: 100, fontSize: 11,
@@ -119,7 +120,7 @@ export function AboutPage() {
             <div style={{ fontSize: 13, color: "var(--text-muted)", fontStyle: "italic", lineHeight: 1.6, padding: 16, background: "var(--bg-tertiary)", borderRadius: 10, borderLeft: "3px solid var(--accent)" }}>
               "Every day, thousands of Indians lose their hard-earned money to scams that follow predictable
               patterns. I built CyberIntelEngine because I believe that if you can see the scam coming,
-              you can stop it. This platform puts 30 years of cybersecurity knowledge into the hands of
+              you can stop it. This platform puts real cybersecurity intelligence into the hands of
               every citizen — for free."
               <div style={{ marginTop: 8, fontStyle: "normal", fontWeight: 600, color: "var(--text-secondary)" }}>— Prasanna Peshkar</div>
             </div>
