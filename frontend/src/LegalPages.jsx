@@ -13,7 +13,7 @@ export function PrivacyPolicy() {
         <section>
           <h3>1. Introduction</h3>
           <p>
-            ScamCheck ("we", "our", "us") operates a cybercrime intelligence search engine
+            CyberIntelEngine ("we", "our", "us") operates a cybercrime intelligence search engine
             designed to help citizens verify whether a phone number, UPI ID, bank account,
             email, or website is linked to cyber fraud. This Privacy Policy explains how we
             collect, use, and protect your information when you use our platform.
@@ -98,7 +98,7 @@ export function PrivacyPolicy() {
         <section>
           <h3>9. Children's Privacy</h3>
           <p>
-            ScamCheck is not directed at children under 13. We do not knowingly collect
+            CyberIntelEngine is not directed at children under 13. We do not knowingly collect
             personal information from children.
           </p>
         </section>
@@ -107,7 +107,7 @@ export function PrivacyPolicy() {
           <h3>10. Changes to This Policy</h3>
           <p>
             We may update this Privacy Policy from time to time. Changes will be posted
-            on this page with an updated revision date. Continued use of ScamCheck after
+            on this page with an updated revision date. Continued use of CyberIntelEngine after
             changes constitutes acceptance of the revised policy.
           </p>
         </section>
@@ -138,7 +138,7 @@ export function TermsOfService() {
         <section>
           <h3>1. Acceptance of Terms</h3>
           <p>
-            By accessing or using ScamCheck, you agree to be bound by these Terms of Service.
+            By accessing or using CyberIntelEngine, you agree to be bound by these Terms of Service.
             If you do not agree, you may not use the platform.
           </p>
         </section>
@@ -146,7 +146,7 @@ export function TermsOfService() {
         <section>
           <h3>2. Description of Service</h3>
           <p>
-            ScamCheck is a cybercrime intelligence search engine that aggregates publicly
+            CyberIntelEngine is a cybercrime intelligence search engine that aggregates publicly
             available threat intelligence data and community-submitted fraud reports.
             The platform allows users to search suspicious identifiers (phone numbers,
             UPI IDs, bank accounts, emails, domains, crypto wallets) and view associated
@@ -157,7 +157,7 @@ export function TermsOfService() {
         <section>
           <h3>3. Disclaimer of Accuracy</h3>
           <p>
-            <strong>IMPORTANT:</strong> ScamCheck provides information for reference purposes only.
+            <strong>IMPORTANT:</strong> CyberIntelEngine provides information for reference purposes only.
             We aggregate data from multiple public sources and community reports. We do not
             guarantee the accuracy, completeness, or timeliness of any information displayed
             on the platform.
@@ -172,7 +172,7 @@ export function TermsOfService() {
         <section>
           <h3>4. Not Legal or Financial Advice</h3>
           <p>
-            ScamCheck does not provide legal, financial, or law enforcement advice. Our
+            CyberIntelEngine does not provide legal, financial, or law enforcement advice. Our
             risk scores and recommendations are algorithmic assessments based on available
             data and should not be treated as definitive judgments. For legal matters,
             consult a qualified professional. For active fraud, report to
@@ -182,7 +182,7 @@ export function TermsOfService() {
 
         <section>
           <h3>5. User Responsibilities</h3>
-          <p>When using ScamCheck, you agree to:</p>
+          <p>When using CyberIntelEngine, you agree to:</p>
           <p>
             • Not submit false or malicious fraud reports<br />
             • Not use the platform to harass, defame, or target individuals<br />
@@ -207,10 +207,10 @@ export function TermsOfService() {
         <section>
           <h3>7. Intellectual Property</h3>
           <p>
-            The ScamCheck platform, including its design, code, and branding, is our
+            The CyberIntelEngine platform, including its design, code, and branding, is our
             intellectual property. Threat intelligence data sourced from third-party
             feeds is subject to their respective licenses (see Data Sources page).
-            User-submitted reports become part of the ScamCheck intelligence database
+            User-submitted reports become part of the CyberIntelEngine intelligence database
             and may be shared with law enforcement and cybersecurity organizations.
           </p>
         </section>
@@ -218,11 +218,11 @@ export function TermsOfService() {
         <section>
           <h3>8. Limitation of Liability</h3>
           <p>
-            ScamCheck is provided "as is" without warranties of any kind. We shall not
+            CyberIntelEngine is provided "as is" without warranties of any kind. We shall not
             be liable for any direct, indirect, incidental, or consequential damages
             arising from your use of or inability to use the platform. This includes
             but is not limited to financial losses resulting from reliance on information
-            displayed on ScamCheck.
+            displayed on CyberIntelEngine.
           </p>
         </section>
 
@@ -230,7 +230,7 @@ export function TermsOfService() {
           <h3>9. Dispute Resolution for Flagged Indicators</h3>
           <p>
             If you believe a phone number, UPI ID, bank account, email, or domain
-            associated with you has been incorrectly flagged on ScamCheck, you may
+            associated with you has been incorrectly flagged on CyberIntelEngine, you may
             submit a dispute with supporting evidence. We will review disputes within
             7 business days and remove or correct entries that are verified to be inaccurate.
           </p>
@@ -257,7 +257,7 @@ export function TermsOfService() {
           <h3>12. Changes to Terms</h3>
           <p>
             We reserve the right to modify these terms at any time. Continued use of
-            ScamCheck after modifications constitutes acceptance of the revised terms.
+            CyberIntelEngine after modifications constitutes acceptance of the revised terms.
           </p>
         </section>
 
@@ -361,10 +361,10 @@ export function DataSources() {
     },
     {
       name: "Community Reports",
-      org: "ScamCheck Users",
+      org: "CyberIntelEngine Users",
       url: null,
-      data: "Fraud reports submitted by Indian citizens through ScamCheck",
-      license: "ScamCheck proprietary",
+      data: "Fraud reports submitted by Indian citizens through CyberIntelEngine",
+      license: "CyberIntelEngine proprietary",
       commercial: true,
     },
   ];
@@ -378,7 +378,7 @@ export function DataSources() {
         <section>
           <h3>Our Intelligence Sources</h3>
           <p>
-            ScamCheck aggregates cybercrime intelligence from multiple trusted, publicly
+            CyberIntelEngine aggregates cybercrime intelligence from multiple trusted, publicly
             available sources maintained by cybersecurity researchers, organizations, and
             the global security community. Below is a complete list of our data sources,
             their providers, and licensing terms.
@@ -413,7 +413,7 @@ export function DataSources() {
           <h3>Data Accuracy Disclaimer</h3>
           <p>
             While we strive to maintain accurate and up-to-date threat intelligence,
-            ScamCheck cannot guarantee the accuracy of data from third-party sources.
+            CyberIntelEngine cannot guarantee the accuracy of data from third-party sources.
             False positives may occur. If you believe an indicator has been incorrectly
             flagged, please submit a dispute through our platform.
           </p>
@@ -452,13 +452,13 @@ export function Disclaimer() {
   return (
     <div className="legal-page">
       <h2>Disclaimer</h2>
-      <p className="legal-date">Please read this carefully before using ScamCheck</p>
+      <p className="legal-date">Please read this carefully before using CyberIntelEngine</p>
 
       <div className="legal-content">
         <div className="disclaimer-banner">
           <div className="disclaimer-icon">⚠️</div>
           <div>
-            <strong>ScamCheck is an informational tool, not a law enforcement or judicial service.</strong>
+            <strong>CyberIntelEngine is an informational tool, not a law enforcement or judicial service.</strong>
             <p>
               Results displayed on this platform should be used as one input in your
               decision-making process, not as the sole basis for any action.
@@ -469,7 +469,7 @@ export function Disclaimer() {
         <section>
           <h3>No Guarantee of Accuracy</h3>
           <p>
-            ScamCheck aggregates data from publicly available threat intelligence sources
+            CyberIntelEngine aggregates data from publicly available threat intelligence sources
             and community reports. We do not independently verify every data point. False
             positives (legitimate entities incorrectly flagged) and false negatives (fraudulent
             entities not yet reported) are possible.
@@ -479,7 +479,7 @@ export function Disclaimer() {
         <section>
           <h3>Not a Substitute for Official Channels</h3>
           <p>
-            ScamCheck is not affiliated with, endorsed by, or connected to any government
+            CyberIntelEngine is not affiliated with, endorsed by, or connected to any government
             agency, law enforcement body, or regulatory authority. If you are a victim of
             cybercrime, always report to official channels:
           </p>
@@ -494,7 +494,7 @@ export function Disclaimer() {
         <section>
           <h3>No Legal Judgment</h3>
           <p>
-            A risk score or "Confirmed Fraud" label on ScamCheck does not constitute a
+            A risk score or "Confirmed Fraud" label on CyberIntelEngine does not constitute a
             legal finding of guilt or criminal activity. It reflects aggregated reports
             and algorithmic assessment. Only courts of law can determine legal guilt.
           </p>
@@ -503,12 +503,12 @@ export function Disclaimer() {
         <section>
           <h3>Limitation of Liability</h3>
           <p>
-            Under no circumstances shall ScamCheck, its operators, contributors, or data
+            Under no circumstances shall CyberIntelEngine, its operators, contributors, or data
             providers be liable for any loss, damage, or harm arising from:
           </p>
           <p>
             • Reliance on information displayed on this platform<br />
-            • Financial losses from transactions made based on ScamCheck results<br />
+            • Financial losses from transactions made based on CyberIntelEngine results<br />
             • Incorrectly flagged indicators (false positives)<br />
             • Indicators not yet in our database (false negatives)<br />
             • Actions taken or not taken based on our risk assessments
@@ -520,7 +520,7 @@ export function Disclaimer() {
           <p>
             You are solely responsible for your decisions regarding financial transactions,
             sharing of personal information, and interactions with entities you search on
-            ScamCheck. We strongly recommend verifying all information through multiple
+            CyberIntelEngine. We strongly recommend verifying all information through multiple
             independent sources before making any financial decisions.
           </p>
         </section>
@@ -528,7 +528,7 @@ export function Disclaimer() {
         <section>
           <h3>Dispute Process</h3>
           <p>
-            If you or your organization has been incorrectly flagged on ScamCheck, you
+            If you or your organization has been incorrectly flagged on CyberIntelEngine, you
             have the right to dispute the listing. Contact <span className="accent">disputes@scamcheck.in</span> with
             supporting documentation. We commit to reviewing all disputes within 7
             business days.

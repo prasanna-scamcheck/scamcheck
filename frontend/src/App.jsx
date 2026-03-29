@@ -6,6 +6,7 @@ import {
   predictScam, getScamLibrary, getScamDetail
 } from "./api";
 import { PrivacyPolicy, TermsOfService, DataSources, Disclaimer } from "./LegalPages";
+import { AboutPage } from "./AboutPage";
 import "./App.css";
 import "./LegalStyles.css";
 
@@ -162,13 +163,14 @@ export default function App() {
       <nav className="nav">
         <div className="nav-brand" onClick={goHome}>
           <div className="shield">🛡</div>
-          <span>ScamCheck</span>
+          <span>CyberIntelEngine</span>
         </div>
         <div className="nav-links">
           <button className={`nav-link ${page === "home" ? "active" : ""}`} onClick={goHome}>Search</button>
           <button className={`nav-link ${page === "predictor" ? "active" : ""}`} onClick={() => setPage("predictor")}>Scam Predictor</button>
           <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report Scam</button>
           <button className={`nav-link ${page === "admin" ? "active" : ""}`} onClick={() => setPage("admin")}>Dashboard</button>
+          <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => { setPage("about"); window.scrollTo(0,0); }}>About</button>
         </div>
       </nav>
 
@@ -748,6 +750,9 @@ export default function App() {
         </div>
       )}
 
+      {/* ─── ABOUT PAGE ─── */}
+      {page === "about" && <AboutPage />}
+
       {/* ─── LEGAL PAGES ─── */}
       {page === "privacy" && <PrivacyPolicy />}
       {page === "terms" && <TermsOfService />}
@@ -756,7 +761,7 @@ export default function App() {
 
       {/* FOOTER */}
       <footer className="footer">
-        <div><strong>ScamCheck</strong> — Cybercrime Intelligence Search Engine</div>
+        <div><strong>CyberIntelEngine</strong> — Cybercrime Intelligence Search Engine</div>
         <div style={{ marginTop: 6 }}>
           If you are a victim, report at <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer">cybercrime.gov.in</a> or call <span className="mono accent">1930</span>
         </div>
@@ -778,7 +783,7 @@ export default function App() {
       {showConsent && (
         <div className="consent-banner">
           <p>
-            ScamCheck uses aggregated threat intelligence data to help prevent cybercrime.
+            CyberIntelEngine uses aggregated threat intelligence data to help prevent cybercrime.
             By using this platform, you agree to our <button className="footer-legal-link" style={{ display: "inline", textDecoration: "underline" }} onClick={() => { setPage("terms"); setShowConsent(false); window.scrollTo(0,0); }}>Terms of Service</button> and <button className="footer-legal-link" style={{ display: "inline", textDecoration: "underline" }} onClick={() => { setPage("privacy"); setShowConsent(false); window.scrollTo(0,0); }}>Privacy Policy</button>.
           </p>
           <button className="consent-btn" onClick={() => setShowConsent(false)}>I Understand</button>

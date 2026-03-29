@@ -1,5 +1,5 @@
 """
-ScamCheck — Cybercrime Intelligence Search Engine
+CyberIntelEngine — Cybercrime Intelligence Search Engine
 Main FastAPI Application
 """
 from fastapi import FastAPI, Depends, HTTPException, Query, Request
@@ -23,7 +23,7 @@ from risk_engine import (
 
 # ── App Setup ──
 app = FastAPI(
-    title="ScamCheck API",
+    title="CyberIntelEngine API",
     description="Cybercrime Intelligence Search Engine — verify before you trust or pay.",
     version="1.0.0",
 )
@@ -369,4 +369,4 @@ def scam_radar(db: Session = Depends(get_db)):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "ScamCheck API", "version": "1.0.0"}
+    return {"status": "ok", "service": "CyberIntelEngine API", "version": "1.0.0"}
