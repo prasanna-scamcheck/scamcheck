@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 
-const API_BASE = process.env.REACT_APP_API_URL || "";
+const API_BASE = process.env.REACT_APP_API_URL || "https://scamcheck-api-india.onrender.com";
 
 /* ─── helpers ───────────────────────────────────────────────────── */
 function timeAgo(dateStr) {
