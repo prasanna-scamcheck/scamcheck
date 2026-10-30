@@ -7,6 +7,7 @@ import {
 } from "./api";
 import { PrivacyPolicy, TermsOfService, DataSources, Disclaimer } from "./LegalPages";
 import { AboutPage } from "./AboutPage";
+import { RansomwareTracker } from "./RansomwareTracker";
 import "./App.css";
 import "./LegalStyles.css";
 
@@ -168,6 +169,7 @@ export default function App() {
         <div className="nav-links">
           <button className={`nav-link ${page === "home" ? "active" : ""}`} onClick={goHome}>Search</button>
           <button className={`nav-link ${page === "predictor" ? "active" : ""}`} onClick={() => setPage("predictor")}>Scam Predictor</button>
+          <button className={`nav-link ${page === "ransomware" ? "active" : ""}`} onClick={() => setPage("ransomware")}>Ransomware Tracker</button>
           <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report Scam</button>
           <button className={`nav-link ${page === "admin" ? "active" : ""}`} onClick={() => setPage("admin")}>Dashboard</button>
           <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => { setPage("about"); window.scrollTo(0,0); }}>About</button>
@@ -410,7 +412,7 @@ export default function App() {
             <strong>What happens next?</strong><br />
             Your report enters our moderation queue. Verified reports contribute to the risk score and help protect future victims.
             <br /><br />
-            <strong>Immediate help:</strong> If you've lost money, report to <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer">cybercrime.gov.in</a> or call <span className="mono accent">1930</span>.
+            <strong>Immediate help:</strong> If you've lost money, report at <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer">cybercrime.gov.in</a> or call <span className="mono accent">1930</span>.
           </div>
         </div>
       )}
@@ -747,6 +749,13 @@ export default function App() {
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ─── RANSOMWARE TRACKER ─── */}
+      {page === "ransomware" && (
+        <div style={{ padding: "40px 24px" }}>
+          <RansomwareTracker />
         </div>
       )}
 
