@@ -842,6 +842,7 @@ export function RansomwareTracker() {
   const [countrySearch, setCountrySearch] = useState("");
   const [groupSearch, setGroupSearch] = useState("");
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [feedLimit, setFeedLimit] = useState(50);
 
   /* ── load dashboard ── */
   useEffect(() => {
@@ -1040,7 +1041,7 @@ export function RansomwareTracker() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {filteredVictims.slice(0, 100).map((v, i) => {
+            {filteredVictims.slice(0, feedLimit).map((v, i) => {
               const tweetTemplates = [
                 `${v.group_name} just added ${v.victim}${v.country_name ? ` from ${v.country_name}` : ""} to their leak site.${v.activity && v.activity !== "Not Found" ? ` They're in the ${v.activity} sector.` : ""}\n\nThis is why no organization is too big or too small to be a target.\n\n#Ransomware #CyberSecurity`,
                 `Another day, another ransomware hit.\n\n${v.victim}${v.country_name ? ` (${v.country_name})` : ""} appears on ${v.group_name}'s victim list.${v.activity && v.activity !== "Not Found" ? ` Sector: ${v.activity}.` : ""}\n\nStay vigilant, patch your systems, back up your data.\n\n#InfoSec #ThreatIntel`,
@@ -1110,6 +1111,19 @@ export function RansomwareTracker() {
               );
             })}
           </div>
+          {filteredVictims.length > feedLimit && (
+            <div style={{ textAlign: "center", marginTop: 16 }}>
+              <button onClick={() => setFeedLimit(prev => prev + 50)}
+                className="cta-btn" style={{ padding: "10px 24px", fontSize: 13 }}>
+                Load More ({filteredVictims.length - feedLimit} remaining)
+              </button>
+            </div>
+          )}
+          {filteredVictims.length > 0 && filteredVictims.length <= feedLimit && (
+            <div style={{ textAlign: "center", padding: 16, fontSize: 12, color: "var(--text-muted)" }}>
+              Showing all {filteredVictims.length} victims
+            </div>
+          )}
         </div>
       )}
 

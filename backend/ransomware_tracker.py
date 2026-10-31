@@ -118,11 +118,11 @@ def _normalize_victim(v, fallback_group="Unknown"):
 
 # ─── Data fetchers ──────────────────────────────────────────────────
 
-async def get_recent_victims(limit: int = 100):
-    """Get recent ransomware victims from ransomware.live."""
+async def get_recent_victims(limit: int = 0):
+    """Get recent ransomware victims from ransomware.live. limit=0 means all."""
     cached = _get_cached("recent_victims")
     if cached:
-        return cached[:limit]
+        return cached[:limit] if limit > 0 else cached
 
     data = await _fetch_json(f"{RANSOMWARE_LIVE_BASE}/recentvictims")
     if isinstance(data, dict) and "error" in data:
@@ -130,7 +130,7 @@ async def get_recent_victims(limit: int = 100):
 
     victims = [_normalize_victim(v) for v in data] if isinstance(data, list) else []
     _set_cached("recent_victims", victims)
-    return victims[:limit]
+    return victims[:limit] if limit > 0 else victims
 
 
 async def get_all_groups():
@@ -266,8 +266,8 @@ async def get_tracker_dashboard():
     if cached:
         return cached
 
-    # Fetch recent victims (global)
-    victims = await get_recent_victims(limit=500)
+    # Fetch recent victims (global) — get ALL victims the API returns
+    victims = await get_recent_victims(limit=0)
     if isinstance(victims, dict) and "error" in victims:
         victims = []
 
@@ -352,7 +352,7 @@ async def get_tracker_dashboard():
             "top_country_code": all_countries[0]["code"] if all_countries else "",
             "top_country_count": all_countries[0]["count"] if all_countries else 0,
         },
-        "recent_victims": victims[:100],
+        "recent_victims": victims,
         "top_groups": top_groups,
         "all_countries": all_countries,
         "top_sectors": top_sectors,
