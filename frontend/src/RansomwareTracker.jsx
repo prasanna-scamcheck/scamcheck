@@ -840,6 +840,7 @@ export function RansomwareTracker() {
   const [countryVictims, setCountryVictims] = useState(null);
   const [countryLoading, setCountryLoading] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
+  const [groupSearch, setGroupSearch] = useState("");
 
   /* ── load dashboard ── */
   useEffect(() => {
@@ -907,6 +908,17 @@ export function RansomwareTracker() {
       (v.activity || "").toLowerCase().includes(q)
     );
   }, [dashboard, feedFilter]);
+
+  /* ── filtered groups ── */
+  const filteredGroups = useMemo(() => {
+    if (!dashboard?.groups_directory) return [];
+    if (!groupSearch) return dashboard.groups_directory;
+    const q = groupSearch.toLowerCase();
+    return dashboard.groups_directory.filter(g =>
+      (g.name || "").toLowerCase().includes(q) ||
+      (g.description || "").toLowerCase().includes(q)
+    );
+  }, [dashboard, groupSearch]);
 
   /* ── filtered countries ── */
   const filteredCountries = useMemo(() => {
@@ -1241,9 +1253,20 @@ export function RansomwareTracker() {
                 <div className="card-title">Top Active Ransomware Groups (Worldwide)</div>
                 <MiniBar data={(dashboard?.top_groups || []).map(g => ({ label: g.name, count: g.count, color: "var(--accent)" }))} />
               </div>
-              <div className="card-title" style={{ marginBottom: 12 }}>All Groups Directory</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div className="card-title" style={{ marginBottom: 0 }}>All Groups Directory ({dashboard?.groups_directory?.length || 0})</div>
+              </div>
+              <input type="text" placeholder="Search groups by name or description..."
+                value={groupSearch} onChange={e => setGroupSearch(e.target.value)}
+                style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 13, marginBottom: 12, boxSizing: "border-box" }}
+              />
+              {groupSearch && filteredGroups.length !== (dashboard?.groups_directory?.length || 0) && (
+                <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>
+                  Showing {filteredGroups.length} of {dashboard?.groups_directory?.length || 0} groups
+                </div>
+              )}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
-                {(dashboard?.groups_directory || []).map((g, i) => (
+                {filteredGroups.map((g, i) => (
                   <div key={i} className="card" onClick={() => loadGroupVictims(g.name)}
                     style={{ cursor: "pointer", padding: 14, transition: "border-color 0.2s" }}
                     onMouseOver={e => e.currentTarget.style.borderColor = "var(--accent)"}

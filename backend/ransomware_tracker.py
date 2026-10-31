@@ -359,7 +359,7 @@ async def get_tracker_dashboard():
         "timeline": timeline_data,
         "groups_directory": [
             {"name": g.get("name", ""), "description": g.get("description", "")}
-            for g in groups[:80]
+            for g in groups
         ],
         "last_updated": datetime.utcnow().isoformat(),
     }
