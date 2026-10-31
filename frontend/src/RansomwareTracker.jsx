@@ -68,6 +68,406 @@ function Sparkline({ data, width = 420, height = 80 }) {
   );
 }
 
+/* ─── Threat Pulse Score ────────────────────────────────────────── */
+function ThreatPulse({ dashboard }) {
+  const score = useMemo(() => {
+    if (!dashboard) return { value: 0, label: "UNKNOWN", color: "#666" };
+    const s = dashboard.stats || {};
+    const timeline = dashboard.timeline || [];
+
+    /* Compute score from multiple factors */
+    let pts = 0;
+
+    /* Factor 1: volume — how many victims in the recent window */
+    const totalVictims = s.total_recent_victims || 0;
+    if (totalVictims > 80) pts += 30;
+    else if (totalVictims > 50) pts += 22;
+    else if (totalVictims > 30) pts += 15;
+    else if (totalVictims > 10) pts += 8;
+    else pts += 3;
+
+    /* Factor 2: active groups */
+    const groups = s.total_groups || 0;
+    if (groups > 300) pts += 20;
+    else if (groups > 200) pts += 15;
+    else if (groups > 100) pts += 10;
+    else pts += 5;
+
+    /* Factor 3: geographic spread */
+    const countries = s.total_countries_hit || 0;
+    if (countries > 15) pts += 20;
+    else if (countries > 10) pts += 14;
+    else if (countries > 5) pts += 8;
+    else pts += 3;
+
+    /* Factor 4: trend — is activity increasing? */
+    if (timeline.length >= 3) {
+      const recent = timeline.slice(-2).reduce((a, d) => a + d.count, 0);
+      const earlier = timeline.slice(0, 2).reduce((a, d) => a + d.count, 0);
+      if (recent > earlier * 1.3) pts += 20;
+      else if (recent > earlier) pts += 12;
+      else pts += 6;
+    } else {
+      pts += 8;
+    }
+
+    /* Factor 5: concentration — is one group dominating? */
+    const topCount = s.top_group_count || 0;
+    if (topCount > 15) pts += 10;
+    else if (topCount > 8) pts += 7;
+    else pts += 4;
+
+    const value = Math.min(Math.max(Math.round(pts), 0), 100);
+    let label, color;
+    if (value >= 80) { label = "CRITICAL"; color = "#ff3d3d"; }
+    else if (value >= 60) { label = "HIGH"; color = "#ff8c00"; }
+    else if (value >= 40) { label = "ELEVATED"; color = "#ffc107"; }
+    else if (value >= 20) { label = "MODERATE"; color = "#4dabf7"; }
+    else { label = "LOW"; color = "#51cf66"; }
+
+    return { value, label, color };
+  }, [dashboard]);
+
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference - (score.value / 100) * circumference;
+
+  return (
+    <div className="card" style={{
+      padding: 24, marginBottom: 24, textAlign: "center",
+      background: `linear-gradient(135deg, var(--bg-secondary) 0%, rgba(${score.color === "#ff3d3d" ? "255,61,61" : score.color === "#ff8c00" ? "255,140,0" : score.color === "#ffc107" ? "255,193,7" : score.color === "#4dabf7" ? "77,171,247" : "81,207,102"},0.06) 100%)`,
+      borderColor: `${score.color}33`,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
+        {/* Circular gauge */}
+        <div style={{ position: "relative", width: 130, height: 130 }}>
+          <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: "rotate(-90deg)" }}>
+            <circle cx="65" cy="65" r="54" fill="none" stroke="var(--bg-tertiary)" strokeWidth="10" />
+            <circle cx="65" cy="65" r="54" fill="none" stroke={score.color} strokeWidth="10"
+              strokeDasharray={circumference} strokeDashoffset={offset}
+              strokeLinecap="round" style={{ transition: "stroke-dashoffset 1.5s ease" }} />
+          </svg>
+          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center" }}>
+            <div className="mono" style={{ fontSize: 32, fontWeight: 800, color: score.color, lineHeight: 1 }}>{score.value}</div>
+            <div style={{ fontSize: 8, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1, marginTop: 2 }}>/ 100</div>
+          </div>
+        </div>
+
+        {/* Info panel */}
+        <div style={{ textAlign: "left" }}>
+          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>
+            Threat Pulse Score
+          </div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: score.color, letterSpacing: 2, marginBottom: 8 }}>
+            {score.label}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.7, maxWidth: 280 }}>
+            Based on {dashboard?.stats?.total_recent_victims || 0} recent victims across {dashboard?.stats?.total_countries_hit || 0} countries,
+            with {dashboard?.stats?.total_groups || 0} active groups tracked.
+            {score.value >= 70 ? " Ransomware activity is significantly above average." :
+             score.value >= 45 ? " Ransomware activity is above baseline levels." :
+             " Ransomware activity is within normal range."}
+          </div>
+          <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>
+            Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "—"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Live Attack Map (SVG World Map) ──────────────────────────── */
+function AttackMap({ countries }) {
+  if (!countries || countries.length === 0) return null;
+
+  /* Simplified world map coordinates — major countries with approximate center lat/lng */
+  const countryCoords = {
+    US: [-98, 38], CA: [-106, 56], MX: [-102, 23], BR: [-51, -10], AR: [-64, -34],
+    CL: [-71, -35], CO: [-74, 4], PE: [-76, -10], VE: [-66, 7],
+    GB: [-2, 54], FR: [2, 47], DE: [10, 51], IT: [12, 42], ES: [-4, 40],
+    PT: [-8, 39], NL: [5, 52], BE: [4, 50], CH: [8, 47], AT: [14, 47],
+    PL: [20, 52], CZ: [15, 50], SE: [15, 62], NO: [10, 62], FI: [26, 64],
+    DK: [10, 56], IE: [-8, 53], RO: [25, 46], HU: [19, 47], GR: [22, 39],
+    BG: [25, 43], HR: [16, 45], SK: [20, 49], RS: [21, 44], UA: [32, 49],
+    RU: [90, 60], TR: [35, 39], IL: [35, 31], SA: [45, 24], AE: [54, 24],
+    QA: [51, 25], KW: [48, 29], OM: [57, 21], BH: [50, 26], JO: [36, 31],
+    LB: [36, 34], IQ: [44, 33], IR: [53, 32], PK: [69, 30], IN: [79, 22],
+    BD: [90, 24], LK: [81, 8], NP: [84, 28], MM: [96, 22], TH: [100, 15],
+    VN: [106, 16], MY: [102, 4], SG: [104, 1], ID: [120, -5], PH: [122, 12],
+    CN: [105, 35], JP: [138, 36], KR: [128, 36], TW: [121, 24],
+    AU: [134, -25], NZ: [174, -41], ZA: [25, -29], NG: [8, 10], KE: [38, 0],
+    EG: [30, 27], MA: [-6, 32], TN: [9, 34], GH: [0, 8], ET: [40, 9],
+    DZ: [3, 28], LY: [17, 27], SD: [30, 15], TZ: [35, -6], UG: [32, 1],
+  };
+
+  /* Map longitude/latitude to SVG x/y (simple equirectangular) */
+  const mapW = 800, mapH = 400;
+  const toX = lng => ((lng + 180) / 360) * mapW;
+  const toY = lat => ((90 - lat) / 180) * mapH;
+
+  const maxCount = Math.max(...countries.map(c => c.count), 1);
+
+  return (
+    <div className="card" style={{ padding: 20, marginBottom: 24, overflow: "hidden" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <div className="card-title" style={{ marginBottom: 0 }}>Live Global Attack Map</div>
+        <div style={{ display: "flex", gap: 12, fontSize: 10, color: "var(--text-muted)" }}>
+          <span><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#ffc107", marginRight: 4 }}/>1-3</span>
+          <span><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#ff8c00", marginRight: 4 }}/>4-10</span>
+          <span><span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#ff3d3d", marginRight: 4 }}/>10+</span>
+        </div>
+      </div>
+      <div style={{ overflowX: "auto" }}>
+        <svg viewBox={`0 0 ${mapW} ${mapH}`} style={{ width: "100%", minWidth: 500, height: "auto", background: "rgba(0,0,0,0.2)", borderRadius: 8 }}>
+          {/* Grid lines for visual reference */}
+          {[0, 1, 2, 3, 4].map(i => (
+            <line key={`h${i}`} x1="0" y1={i * 100} x2={mapW} y2={i * 100} stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+          ))}
+          {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+            <line key={`v${i}`} x1={i * 100} y1="0" x2={i * 100} y2={mapH} stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+          ))}
+          {/* Equator */}
+          <line x1="0" y1={mapH / 2} x2={mapW} y2={mapH / 2} stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" strokeDasharray="4 4" />
+
+          {/* Country attack dots */}
+          {countries.map((c, i) => {
+            const coords = countryCoords[c.code];
+            if (!coords) return null;
+            const x = toX(coords[0]);
+            const y = toY(coords[1]);
+            const size = Math.max(4, Math.min(18, (c.count / maxCount) * 18));
+            const color = c.count > 10 ? "#ff3d3d" : c.count > 3 ? "#ff8c00" : "#ffc107";
+            const pulseSize = size + 8;
+            return (
+              <g key={c.code}>
+                {/* Pulse ring animation */}
+                <circle cx={x} cy={y} r={pulseSize} fill="none" stroke={color} strokeWidth="1" opacity="0.3">
+                  <animate attributeName="r" values={`${size};${pulseSize + 6};${size}`} dur="3s" repeatCount="indefinite" begin={`${i * 0.2}s`} />
+                  <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite" begin={`${i * 0.2}s`} />
+                </circle>
+                {/* Glow */}
+                <circle cx={x} cy={y} r={size + 3} fill={color} opacity="0.15" />
+                {/* Main dot */}
+                <circle cx={x} cy={y} r={size} fill={color} opacity="0.85" />
+                {/* Center highlight */}
+                <circle cx={x} cy={y} r={Math.max(2, size * 0.35)} fill="white" opacity="0.6" />
+                {/* Label */}
+                <text x={x} y={y - size - 5} textAnchor="middle" fill="var(--text-secondary)" fontSize="9" fontFamily="monospace">
+                  {c.code} ({c.count})
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8, textAlign: "center" }}>
+        Showing attacks across {countries.length} countries · Dot size indicates attack volume
+      </div>
+    </div>
+  );
+}
+
+/* ─── Risk Assessment Tool ─────────────────────────────────────── */
+function RiskAssessment({ dashboard }) {
+  const [sector, setSector] = useState("");
+  const [country, setCountry] = useState("");
+  const [result, setResult] = useState(null);
+
+  const sectors = useMemo(() => {
+    if (!dashboard?.top_sectors) return [];
+    return dashboard.top_sectors.map(s => s.sector).filter(s => s !== "Not Found");
+  }, [dashboard]);
+
+  const allCountries = useMemo(() => {
+    if (!dashboard?.all_countries) return [];
+    return dashboard.all_countries;
+  }, [dashboard]);
+
+  const assess = () => {
+    if (!sector && !country) return;
+    const victims = dashboard?.recent_victims || [];
+    const totalVictims = victims.length || 1;
+
+    /* Sector analysis */
+    let sectorCount = 0, sectorGroups = {}, sectorCountries = {};
+    if (sector) {
+      victims.forEach(v => {
+        if ((v.activity || "").toLowerCase() === sector.toLowerCase()) {
+          sectorCount++;
+          sectorGroups[v.group_name] = (sectorGroups[v.group_name] || 0) + 1;
+          if (v.country_name) sectorCountries[v.country_name] = (sectorCountries[v.country_name] || 0) + 1;
+        }
+      });
+    }
+
+    /* Country analysis */
+    let countryCount = 0, countryGroups = {}, countrySectors = {};
+    if (country) {
+      victims.forEach(v => {
+        if ((v.country || "").toUpperCase() === country.toUpperCase()) {
+          countryCount++;
+          countryGroups[v.group_name] = (countryGroups[v.group_name] || 0) + 1;
+          if (v.activity) countrySectors[v.activity] = (countrySectors[v.activity] || 0) + 1;
+        }
+      });
+    }
+
+    /* Combined risk calculation */
+    let riskScore = 0;
+    const sectorPercent = (sectorCount / totalVictims) * 100;
+    const countryPercent = (countryCount / totalVictims) * 100;
+
+    if (sector) {
+      if (sectorPercent > 12) riskScore += 35;
+      else if (sectorPercent > 7) riskScore += 25;
+      else if (sectorPercent > 3) riskScore += 15;
+      else riskScore += 5;
+    }
+
+    if (country) {
+      if (countryPercent > 20) riskScore += 40;
+      else if (countryPercent > 10) riskScore += 28;
+      else if (countryPercent > 5) riskScore += 18;
+      else if (countryPercent > 0) riskScore += 10;
+      else riskScore += 3;
+    }
+
+    /* If both are selected, check overlap */
+    if (sector && country) {
+      const overlapCount = victims.filter(v =>
+        (v.activity || "").toLowerCase() === sector.toLowerCase() &&
+        (v.country || "").toUpperCase() === country.toUpperCase()
+      ).length;
+      if (overlapCount > 0) riskScore += 20;
+      else riskScore += 5;
+    }
+
+    /* Normalize */
+    const maxPossible = sector && country ? 95 : 50;
+    riskScore = Math.min(Math.round((riskScore / maxPossible) * 100), 100);
+
+    let riskLevel, riskColor;
+    if (riskScore >= 75) { riskLevel = "CRITICAL"; riskColor = "#ff3d3d"; }
+    else if (riskScore >= 55) { riskLevel = "HIGH"; riskColor = "#ff8c00"; }
+    else if (riskScore >= 35) { riskLevel = "MODERATE"; riskColor = "#ffc107"; }
+    else if (riskScore >= 15) { riskLevel = "LOW"; riskColor = "#4dabf7"; }
+    else { riskLevel = "MINIMAL"; riskColor = "#51cf66"; }
+
+    const topThreats = Object.entries({ ...sectorGroups, ...countryGroups })
+      .sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => ({ name, count }));
+
+    setResult({
+      riskScore, riskLevel, riskColor,
+      sectorCount, countryCount,
+      sectorPercent: sectorPercent.toFixed(1),
+      countryPercent: countryPercent.toFixed(1),
+      topThreats,
+      sectorGroups: Object.entries(sectorGroups).sort((a, b) => b[1] - a[1]).slice(0, 3),
+      countryGroups: Object.entries(countryGroups).sort((a, b) => b[1] - a[1]).slice(0, 3),
+    });
+  };
+
+  return (
+    <div>
+      <div className="card" style={{ marginBottom: 16 }}>
+        <div className="card-title" style={{ marginBottom: 4 }}>Is My Company At Risk?</div>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>
+          Select your industry and/or country to get a personalized ransomware risk assessment
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 10, alignItems: "end" }}>
+          <div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.6 }}>Industry / Sector</div>
+            <select value={sector} onChange={e => { setSector(e.target.value); setResult(null); }}
+              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 13 }}>
+              <option value="">— Select sector —</option>
+              {sectors.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.6 }}>Country</div>
+            <select value={country} onChange={e => { setCountry(e.target.value); setResult(null); }}
+              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 13 }}>
+              <option value="">— Select country —</option>
+              {allCountries.map(c => <option key={c.code} value={c.code}>{countryFlag(c.code)} {c.name}</option>)}
+            </select>
+          </div>
+          <button onClick={assess} className="cta-btn" style={{ padding: "10px 20px", fontSize: 13, whiteSpace: "nowrap" }}
+            disabled={!sector && !country}>
+            Assess Risk
+          </button>
+        </div>
+      </div>
+
+      {result && (
+        <div className="card" style={{
+          borderColor: `${result.riskColor}44`,
+          background: `linear-gradient(135deg, var(--bg-secondary) 0%, rgba(${result.riskColor === "#ff3d3d" ? "255,61,61" : result.riskColor === "#ff8c00" ? "255,140,0" : result.riskColor === "#ffc107" ? "255,193,7" : result.riskColor === "#4dabf7" ? "77,171,247" : "81,207,102"},0.04) 100%)`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 20, flexWrap: "wrap" }}>
+            {/* Risk score circle */}
+            <div style={{ position: "relative", width: 90, height: 90, flexShrink: 0 }}>
+              <svg width="90" height="90" viewBox="0 0 90 90" style={{ transform: "rotate(-90deg)" }}>
+                <circle cx="45" cy="45" r="38" fill="none" stroke="var(--bg-tertiary)" strokeWidth="7" />
+                <circle cx="45" cy="45" r="38" fill="none" stroke={result.riskColor} strokeWidth="7"
+                  strokeDasharray={2 * Math.PI * 38} strokeDashoffset={2 * Math.PI * 38 - (result.riskScore / 100) * 2 * Math.PI * 38}
+                  strokeLinecap="round" style={{ transition: "stroke-dashoffset 1s ease" }} />
+              </svg>
+              <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center" }}>
+                <div className="mono" style={{ fontSize: 22, fontWeight: 800, color: result.riskColor }}>{result.riskScore}</div>
+              </div>
+            </div>
+
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: result.riskColor, letterSpacing: 1, marginBottom: 4 }}>
+                {result.riskLevel} RISK
+              </div>
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                {sector && <span>{sector}: {result.sectorCount} attacks ({result.sectorPercent}% of all recent activity). </span>}
+                {country && <span>{countryFlag(country)} {allCountries.find(c => c.code === country)?.name || country}: {result.countryCount} attacks ({result.countryPercent}%). </span>}
+                {result.riskScore >= 55
+                  ? "Your profile matches a heavily targeted combination. Strong defenses and incident response plans are essential."
+                  : result.riskScore >= 30
+                  ? "Your profile shows moderate exposure. Standard security practices and monitoring are recommended."
+                  : "Your profile shows relatively low current targeting. Maintain baseline security hygiene."}
+              </div>
+            </div>
+          </div>
+
+          {result.topThreats.length > 0 && (
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                Top Threat Groups to Watch
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {result.topThreats.map((t, i) => (
+                  <span key={i} style={{
+                    padding: "6px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                    background: i === 0 ? `${result.riskColor}22` : "var(--bg-tertiary)",
+                    color: i === 0 ? result.riskColor : "var(--text-secondary)",
+                    border: `1px solid ${i === 0 ? result.riskColor + "44" : "var(--border)"}`,
+                  }}>
+                    {t.name} ({t.count})
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop: 16, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 8, fontSize: 12, color: "var(--text-muted)", lineHeight: 1.7 }}>
+            <strong style={{ color: "var(--text-secondary)" }}>Recommendations: </strong>
+            {result.riskScore >= 55
+              ? "Implement EDR solutions, maintain offline backups, conduct regular security audits, establish incident response procedures, and consider cyber insurance. Monitor these threat groups' TTPs closely."
+              : result.riskScore >= 30
+              ? "Ensure regular backups, keep systems patched, use multi-factor authentication, train employees on phishing awareness, and monitor for suspicious activity."
+              : "Maintain regular backups, keep software updated, use strong passwords with MFA, and stay informed about emerging threats in your sector."}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ═══ main component ════════════════════════════════════════════════ */
 export function RansomwareTracker() {
   const [dashboard, setDashboard] = useState(null);
@@ -209,6 +609,12 @@ export function RansomwareTracker() {
         </p>
       </div>
 
+      {/* ── NEW: Threat Pulse Score ── */}
+      <ThreatPulse dashboard={dashboard} />
+
+      {/* ── NEW: Live Attack Map ── */}
+      <AttackMap countries={dashboard?.all_countries || []} />
+
       {/* ── Stat cards ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
         {[
@@ -231,6 +637,7 @@ export function RansomwareTracker() {
           ["feed", "🔴 Live Feed"],
           ["countries", "🌍 Countries"],
           ["groups", "👥 Groups"],
+          ["risk", "🛡️ Risk Check"],
           ["analytics", "📊 Analytics"],
           ["search", "🔍 Search"],
         ].map(([key, label]) => (
@@ -496,6 +903,9 @@ export function RansomwareTracker() {
           )}
         </div>
       )}
+
+      {/* ═══ TAB: Risk Check ═════════════════════════════════════ */}
+      {tab === "risk" && <RiskAssessment dashboard={dashboard} />}
 
       {/* ═══ TAB: Analytics (GLOBAL) ══════════════════════════════ */}
       {tab === "analytics" && (
