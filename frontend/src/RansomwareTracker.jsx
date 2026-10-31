@@ -267,6 +267,361 @@ function AttackMap({ countries }) {
   );
 }
 
+/* ─── Group Kill Chain Knowledge Base ──────────────────────────── */
+const GROUP_INTEL = {
+  lockbit: {
+    aka: ["LockBit 3.0", "LockBit Black"],
+    firstSeen: "2019",
+    type: "Ransomware-as-a-Service (RaaS)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Phishing emails, exploiting RDP, VPN vulnerabilities (Citrix, Fortinet)", mitre: "T1566, T1133" },
+      { stage: "Execution", icon: "⚡", technique: "PowerShell scripts, cobalt strike beacons, custom loaders", mitre: "T1059.001" },
+      { stage: "Persistence", icon: "🔗", technique: "Registry run keys, scheduled tasks, DLL hijacking", mitre: "T1547, T1053" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "PsExec, RDP pivoting, SMB exploitation, WMI", mitre: "T1021, T1047" },
+      { stage: "Exfiltration", icon: "📤", technique: "StealBit tool, Mega.nz uploads, cloud storage exfil", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "AES-256 + RSA-2048 encryption, shadow copy deletion, wallpaper change", mitre: "T1486, T1490" },
+    ],
+    summary: "One of the most prolific RaaS operations. Known for fast encryption speed, affiliate program, and bug bounty program for their malware. Triple extortion: encryption + data leak + DDoS.",
+  },
+  alphv: {
+    aka: ["BlackCat", "ALPHV", "Noberus"],
+    firstSeen: "2021",
+    type: "Ransomware-as-a-Service (RaaS)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Compromised credentials, Exchange vulnerabilities, social engineering", mitre: "T1078, T1190" },
+      { stage: "Execution", icon: "⚡", technique: "Rust-based payload, cross-platform (Windows/Linux/ESXi)", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Backdoor accounts, SSH keys, scheduled tasks", mitre: "T1136, T1053" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "Mimikatz, PsExec, RDP, credential dumping", mitre: "T1003, T1021" },
+      { stage: "Exfiltration", icon: "📤", technique: "ExMatter tool, custom exfil utilities", mitre: "T1041" },
+      { stage: "Impact", icon: "💀", technique: "ChaCha20/AES encryption, ESXi VM targeting, searchable leak site", mitre: "T1486" },
+    ],
+    summary: "Written in Rust for cross-platform capability. First ransomware with searchable leak site. Known for targeting VMware ESXi environments and large enterprises.",
+  },
+  clop: {
+    aka: ["Cl0p", "TA505", "FIN11"],
+    firstSeen: "2019",
+    type: "Ransomware / Data Extortion",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Zero-day exploits (MOVEit, GoAnywhere, Accellion), supply chain attacks", mitre: "T1190, T1195" },
+      { stage: "Execution", icon: "⚡", technique: "Web shells, SQL injection payloads, file transfer exploitation", mitre: "T1505.003" },
+      { stage: "Persistence", icon: "🔗", technique: "Web shells, backdoor implants on file transfer servers", mitre: "T1505" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "Often unnecessary — mass exploitation of internet-facing apps", mitre: "T1210" },
+      { stage: "Exfiltration", icon: "📤", technique: "Direct download from compromised file transfer platforms", mitre: "T1530" },
+      { stage: "Impact", icon: "💀", technique: "Data theft + extortion (often no encryption), mass victim campaigns", mitre: "T1657" },
+    ],
+    summary: "Pioneers of mass zero-day exploitation campaigns. MOVEit Transfer exploit affected 2,500+ organizations. Shifted from encryption to pure data extortion model.",
+  },
+  play: {
+    aka: ["PlayCrypt", "Play Ransomware"],
+    firstSeen: "2022",
+    type: "Ransomware Group",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Exposed RDP, FortiOS vulnerabilities, valid accounts", mitre: "T1133, T1190" },
+      { stage: "Execution", icon: "⚡", technique: "Custom tools, AdFind for AD enumeration, GMER for AV disabling", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Scheduled tasks, service creation, Group Policy modification", mitre: "T1053, T1543" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "Cobalt Strike, SystemBC, WinSCP, PsExec", mitre: "T1021" },
+      { stage: "Exfiltration", icon: "📤", technique: "WinSCP, WinRAR for staging, split archive uploads", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "Intermittent encryption (faster), .play extension, ransom note in each directory", mitre: "T1486" },
+    ],
+    summary: "Known for intermittent encryption technique for speed. Targets Latin American organizations heavily. Uses LOLBins extensively to evade detection.",
+  },
+  royal: {
+    aka: ["Royal Ransomware", "Blacksuit"],
+    firstSeen: "2022",
+    type: "Ransomware Group (ex-Conti members)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Callback phishing, SEO poisoning, malvertising, exposed RDP", mitre: "T1566, T1189" },
+      { stage: "Execution", icon: "⚡", technique: "BatLoader, QakBot, Cobalt Strike, custom C2", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Registry modifications, startup scripts", mitre: "T1547" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "PsExec, RDP, Cobalt Strike lateral movement, Mimikatz", mitre: "T1021, T1003" },
+      { stage: "Exfiltration", icon: "📤", technique: "Custom exfiltration tools, cloud upload", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "AES + RSA encryption, partial encryption for speed, .royal extension", mitre: "T1486" },
+    ],
+    summary: "Comprised of former Conti members. Known for callback phishing and targeting healthcare and education sectors. Rebranded as Blacksuit in 2023.",
+  },
+  "8base": {
+    aka: ["8Base"],
+    firstSeen: "2022",
+    type: "Ransomware / Data Extortion",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Phishing, SmokeLoader delivery, compromised credentials", mitre: "T1566, T1078" },
+      { stage: "Execution", icon: "⚡", technique: "SmokeLoader, SystemBC proxy, custom loaders", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Scheduled tasks, registry modifications", mitre: "T1053, T1547" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "Network scanning, credential harvesting, RDP", mitre: "T1021" },
+      { stage: "Exfiltration", icon: "📤", technique: "Data staging and upload prior to encryption", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "Phobos-variant encryption, double extortion via leak site", mitre: "T1486" },
+    ],
+    summary: "Aggressive double-extortion group targeting SMBs worldwide. Uses Phobos ransomware variant. Known for targeting companies across multiple sectors.",
+  },
+  medusa: {
+    aka: ["Medusa Ransomware", "MedusaLocker"],
+    firstSeen: "2023",
+    type: "Ransomware-as-a-Service (RaaS)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Exploiting public-facing apps, phishing, initial access brokers", mitre: "T1190, T1566" },
+      { stage: "Execution", icon: "⚡", technique: "PowerShell, batch scripts, custom tooling", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Web shells, registry run keys, service installation", mitre: "T1505, T1547" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "RDP, PsExec, credential harvesting tools", mitre: "T1021, T1003" },
+      { stage: "Exfiltration", icon: "📤", technique: "Rclone, cloud storage upload, custom tools", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "AES-256 encryption, .medusa extension, Tor-based negotiation", mitre: "T1486" },
+    ],
+    summary: "Rising RaaS group known for targeting education and healthcare. Operates Tor-based leak site with countdown timers. Growing affiliate network.",
+  },
+  bianlian: {
+    aka: ["BianLian"],
+    firstSeen: "2022",
+    type: "Data Extortion (formerly Ransomware)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Compromised RDP credentials, ProxyShell exploits", mitre: "T1133, T1190" },
+      { stage: "Execution", icon: "⚡", technique: "Go-based backdoor, custom tooling written in Go", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "SSH tunneling, reverse proxy (Ngrok), backdoor services", mitre: "T1572, T1090" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "RDP, SMB, network scanning, credential access", mitre: "T1021" },
+      { stage: "Exfiltration", icon: "📤", technique: "Rclone to cloud storage, FTP, custom scripts", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "Shifted to pure data extortion (no encryption) in 2023", mitre: "T1657" },
+    ],
+    summary: "Shifted from encryption to pure data extortion in 2023. Written in Go for cross-platform capability. Known for using Ngrok tunnels for persistence.",
+  },
+  akira: {
+    aka: ["Akira Ransomware"],
+    firstSeen: "2023",
+    type: "Ransomware-as-a-Service (RaaS)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "VPN vulnerabilities (Cisco ASA/AnyConnect), compromised credentials", mitre: "T1133, T1078" },
+      { stage: "Execution", icon: "⚡", technique: "PowerShell, Cobalt Strike, PCHunter for AV evasion", mitre: "T1059, T1562" },
+      { stage: "Persistence", icon: "🔗", technique: "New local accounts, scheduled tasks", mitre: "T1136, T1053" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "RDP, RustDesk, AnyDesk, credential dumping", mitre: "T1021, T1003" },
+      { stage: "Exfiltration", icon: "📤", technique: "WinSCP, Rclone, FileZilla to cloud storage", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "ChaCha20/RSA encryption, Linux ESXi variant, .akira extension", mitre: "T1486" },
+    ],
+    summary: "Rapidly growing group with retro-themed leak site. Focuses on exploiting Cisco VPN appliances. Has both Windows and Linux/ESXi variants.",
+  },
+  rhysida: {
+    aka: ["Rhysida Ransomware"],
+    firstSeen: "2023",
+    type: "Ransomware-as-a-Service (RaaS)",
+    killChain: [
+      { stage: "Initial Access", icon: "🎯", technique: "Phishing, VPN/RDP exploitation, initial access brokers", mitre: "T1566, T1133" },
+      { stage: "Execution", icon: "⚡", technique: "PowerShell, Cobalt Strike, PsExec deployment", mitre: "T1059" },
+      { stage: "Persistence", icon: "🔗", technique: "Web shells, scheduled tasks, new user accounts", mitre: "T1505, T1136" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "RDP, PsExec, Mimikatz, ntdsutil for AD dump", mitre: "T1021, T1003" },
+      { stage: "Exfiltration", icon: "📤", technique: "Custom tools, cloud uploads, MegaSync", mitre: "T1567" },
+      { stage: "Impact", icon: "💀", technique: "ChaCha20 + RSA-4096 encryption, .rhysida extension, PDF ransom note", mitre: "T1486" },
+    ],
+    summary: "Targets healthcare, education, and government. Positions themselves as a 'cybersecurity team' finding vulnerabilities. Offers stolen data via auction.",
+  },
+};
+
+/* Map group names to their intel profile keys */
+function getGroupIntel(groupName) {
+  if (!groupName) return null;
+  const lower = groupName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  for (const [key, data] of Object.entries(GROUP_INTEL)) {
+    if (lower.includes(key) || key.includes(lower)) return data;
+    if (data.aka?.some(a => lower.includes(a.toLowerCase().replace(/[^a-z0-9]/g, "")))) return data;
+  }
+  return null;
+}
+
+/* Default kill chain for unknown groups */
+const DEFAULT_KILL_CHAIN = [
+  { stage: "Initial Access", icon: "🎯", technique: "Phishing, credential compromise, vulnerability exploitation", mitre: "T1566, T1190" },
+  { stage: "Execution", icon: "⚡", technique: "Malicious scripts, custom loaders, living-off-the-land binaries", mitre: "T1059" },
+  { stage: "Persistence", icon: "🔗", technique: "Registry modifications, scheduled tasks, backdoor services", mitre: "T1547, T1053" },
+  { stage: "Lateral Movement", icon: "🕸️", technique: "RDP, PsExec, credential harvesting, network scanning", mitre: "T1021, T1003" },
+  { stage: "Exfiltration", icon: "📤", technique: "Data staging and upload to attacker infrastructure", mitre: "T1567" },
+  { stage: "Impact", icon: "💀", technique: "File encryption, shadow copy deletion, ransom note deployment", mitre: "T1486, T1490" },
+];
+
+/* ─── Kill Chain Visual Component ─────────────────────────────── */
+function KillChainDiagram({ chain }) {
+  const stageColors = ["#4dabf7", "#748ffc", "#da77f2", "#ff8c00", "#ffc107", "#ff3d3d"];
+  return (
+    <div style={{ overflowX: "auto" }}>
+      <div style={{ display: "flex", gap: 0, minWidth: 700, padding: "8px 0" }}>
+        {chain.map((step, i) => (
+          <div key={i} style={{ flex: 1, position: "relative" }}>
+            {/* Connector arrow */}
+            {i < chain.length - 1 && (
+              <div style={{
+                position: "absolute", right: -8, top: 22, width: 16, height: 2,
+                background: `linear-gradient(90deg, ${stageColors[i]}, ${stageColors[i + 1]})`,
+                zIndex: 1,
+              }}>
+                <div style={{
+                  position: "absolute", right: -3, top: -3, width: 0, height: 0,
+                  borderLeft: `6px solid ${stageColors[i + 1]}`,
+                  borderTop: "4px solid transparent",
+                  borderBottom: "4px solid transparent",
+                }} />
+              </div>
+            )}
+            <div style={{
+              background: `${stageColors[i]}11`, border: `1px solid ${stageColors[i]}33`,
+              borderRadius: 10, padding: "12px 10px", margin: "0 4px",
+              transition: "border-color 0.2s, background 0.2s",
+            }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = stageColors[i]; e.currentTarget.style.background = `${stageColors[i]}22`; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = `${stageColors[i]}33`; e.currentTarget.style.background = `${stageColors[i]}11`; }}
+            >
+              {/* Stage header */}
+              <div style={{ textAlign: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 20 }}>{step.icon}</span>
+                <div style={{ fontSize: 10, fontWeight: 700, color: stageColors[i], textTransform: "uppercase", letterSpacing: 0.5, marginTop: 4 }}>
+                  {step.stage}
+                </div>
+              </div>
+              {/* Technique */}
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.5, textAlign: "center" }}>
+                {step.technique}
+              </div>
+              {/* MITRE ATT&CK */}
+              <div style={{ textAlign: "center", marginTop: 8 }}>
+                <span className="mono" style={{ fontSize: 9, color: "var(--text-muted)", background: "var(--bg-tertiary)", padding: "2px 6px", borderRadius: 4 }}>
+                  {step.mitre}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Group Profile Component ─────────────────────────────────── */
+function GroupProfile({ groupName, groupVictims, groupLoading, dashboard, onCountryClick }) {
+  const intel = getGroupIntel(groupName);
+  const chain = intel?.killChain || DEFAULT_KILL_CHAIN;
+
+  /* Compute stats from victim data */
+  const stats = useMemo(() => {
+    if (!groupVictims || groupVictims.length === 0) return null;
+    const countries = {}, sectors = {};
+    let earliest = null, latest = null;
+    groupVictims.forEach(v => {
+      if (v.country_name) countries[v.country_name] = (countries[v.country_name] || 0) + 1;
+      if (v.activity && v.activity !== "Not Found") sectors[v.activity] = (sectors[v.activity] || 0) + 1;
+      if (v.discovered) {
+        if (!earliest || v.discovered < earliest) earliest = v.discovered;
+        if (!latest || v.discovered > latest) latest = v.discovered;
+      }
+    });
+    return {
+      topCountries: Object.entries(countries).sort((a, b) => b[1] - a[1]).slice(0, 5),
+      topSectors: Object.entries(sectors).sort((a, b) => b[1] - a[1]).slice(0, 5),
+      earliest, latest,
+    };
+  }, [groupVictims]);
+
+  return (
+    <div>
+      {/* Profile header card */}
+      <div className="card" style={{ marginBottom: 16, borderColor: "rgba(255,61,61,0.3)", background: "linear-gradient(135deg, var(--bg-secondary) 0%, rgba(255,61,61,0.04) 100%)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: 1.5, color: "var(--text-muted)", marginBottom: 4 }}>Ransomware Group Profile</div>
+            <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent)", marginBottom: 4 }}>{groupName}</div>
+            {intel?.aka && (
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>
+                Also known as: {intel.aka.join(", ")}
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              {intel?.type && (
+                <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "rgba(255,140,0,0.15)", color: "#ff8c00", border: "1px solid rgba(255,140,0,0.3)" }}>
+                  {intel.type}
+                </span>
+              )}
+              {intel?.firstSeen && (
+                <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "var(--bg-tertiary)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
+                  Active since {intel.firstSeen}
+                </span>
+              )}
+              <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "rgba(255,61,61,0.15)", color: "#ff3d3d", border: "1px solid rgba(255,61,61,0.3)" }}>
+                {groupLoading ? "..." : `${groupVictims?.length || 0} victims`}
+              </span>
+            </div>
+            {intel?.summary && (
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                {intel.summary}
+              </div>
+            )}
+            {!intel && (
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Ransomware group tracked in the wild. The kill chain below shows a typical ransomware attack pattern.
+                Specific TTPs may vary. {groupLoading ? "" : `${groupVictims?.length || 0} total victims recorded.`}
+              </div>
+            )}
+          </div>
+
+          {/* Quick stats */}
+          {stats && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, minWidth: 180 }}>
+              <div style={{ padding: 10, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: "var(--info)" }}>{stats.topCountries.length}</div>
+                <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase" }}>Countries</div>
+              </div>
+              <div style={{ padding: 10, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: "var(--warning)" }}>{stats.topSectors.length}</div>
+                <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase" }}>Sectors</div>
+              </div>
+              <div style={{ padding: 10, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center", gridColumn: "span 2" }}>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+                  Latest: <span className="mono" style={{ color: "var(--accent)" }}>{timeAgo(stats.latest)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Kill Chain */}
+      <div className="card" style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div className="card-title" style={{ marginBottom: 0 }}>
+            {intel ? "Known Attack Kill Chain" : "Typical Ransomware Kill Chain"}
+          </div>
+          <span className="mono" style={{ fontSize: 10, color: "var(--text-muted)", background: "var(--bg-tertiary)", padding: "3px 8px", borderRadius: 4 }}>
+            MITRE ATT&CK
+          </span>
+        </div>
+        <KillChainDiagram chain={chain} />
+      </div>
+
+      {/* Victim Analysis */}
+      {stats && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+          <div className="card">
+            <div className="card-title" style={{ fontSize: 12 }}>Top Targeted Countries</div>
+            {stats.topCountries.map(([name, count], i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: i < stats.topCountries.length - 1 ? "1px solid var(--border)" : "none" }}>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{name}</span>
+                <span className="mono" style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? "var(--accent)" : "var(--text-muted)" }}>{count}</span>
+              </div>
+            ))}
+            {stats.topCountries.length === 0 && <div style={{ fontSize: 12, color: "var(--text-muted)" }}>No country data available</div>}
+          </div>
+          <div className="card">
+            <div className="card-title" style={{ fontSize: 12 }}>Top Targeted Sectors</div>
+            {stats.topSectors.map(([name, count], i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: i < stats.topSectors.length - 1 ? "1px solid var(--border)" : "none" }}>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{name}</span>
+                <span className="mono" style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? "var(--warning)" : "var(--text-muted)" }}>{count}</span>
+              </div>
+            ))}
+            {stats.topSectors.length === 0 && <div style={{ fontSize: 12, color: "var(--text-muted)" }}>No sector data available</div>}
+          </div>
+        </div>
+      )}
+
+      {/* Victims table */}
+      <div className="card" style={{ marginBottom: 0 }}>
+        <div className="card-title" style={{ fontSize: 12 }}>All Claimed Victims ({groupVictims?.length || 0})</div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Risk Assessment Tool ─────────────────────────────────────── */
 function RiskAssessment({ dashboard }) {
   const [sector, setSector] = useState("");
@@ -839,14 +1194,15 @@ export function RansomwareTracker() {
                 style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 12, marginBottom: 16 }}>
                 ← Back to Groups
               </button>
-              <div className="card" style={{ marginBottom: 16, borderColor: "rgba(255,61,61,0.3)" }}>
-                <div className="card-title" style={{ color: "var(--accent)" }}>{selectedGroup}</div>
-                <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                  {groupLoading ? "Loading victims..." : `${groupVictims?.length || 0} total victims claimed worldwide`}
-                </div>
-              </div>
+              <GroupProfile
+                groupName={selectedGroup}
+                groupVictims={groupVictims}
+                groupLoading={groupLoading}
+                dashboard={dashboard}
+                onCountryClick={(code) => { setTab("countries"); loadCountryVictims(code); }}
+              />
               {!groupLoading && groupVictims && (
-                <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+                <div className="card" style={{ padding: 0, overflow: "hidden", borderTop: "none", borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 500 }}>
                       <thead>
