@@ -124,11 +124,33 @@ async def get_recent_victims(limit: int = 0):
     if cached:
         return cached[:limit] if limit > 0 else cached
 
-    data = await _fetch_json(f"{RANSOMWARE_LIVE_BASE}/recentvictims")
-    if isinstance(data, dict) and "error" in data:
-        return data
+    # Paginate through the API to fetch ALL victims
+    all_victims = []
+    page_size = 200  # max per request
+    offset = 0
+    max_pages = 50   # safety cap to avoid infinite loops
 
-    victims = [_normalize_victim(v) for v in data] if isinstance(data, list) else []
+    for _ in range(max_pages):
+        url = f"{RANSOMWARE_LIVE_BASE}/recentvictims?limit={page_size}&offset={offset}"
+        data = await _fetch_json(url)
+
+        if isinstance(data, dict) and "error" in data:
+            # If first page fails, return the error; otherwise return what we have
+            if not all_victims:
+                return data
+            break
+
+        if not isinstance(data, list) or len(data) == 0:
+            break
+
+        all_victims.extend(data)
+        offset += len(data)
+
+        # If we got fewer than requested, we've reached the end
+        if len(data) < page_size:
+            break
+
+    victims = [_normalize_victim(v) for v in all_victims]
     _set_cached("recent_victims", victims)
     return victims[:limit] if limit > 0 else victims
 
@@ -380,8 +402,8 @@ def register_ransomware_routes(app):
         return await get_tracker_dashboard()
 
     @app.get("/api/ransomware/victims/recent")
-    async def ransomware_recent_victims(limit: int = Query(100, ge=1, le=500)):
-        """Get recent ransomware victims worldwide."""
+    async def ransomware_recent_victims(limit: int = Query(0, ge=0)):
+        """Get recent ransomware victims worldwide. limit=0 means all."""
         return await get_recent_victims(limit=limit)
 
     @app.get("/api/ransomware/groups")
