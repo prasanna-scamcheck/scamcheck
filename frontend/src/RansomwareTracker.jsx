@@ -89,7 +89,7 @@ export function RansomwareTracker() {
   /* ── load dashboard ── */
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_BASE}/api/ransomware/dashboard`)
+    fetch(`${API_BASE}/ransomware/dashboard`)
       .then(r => r.json())
       .then(data => {
         if (data.error) throw new Error(data.message || "API error");
@@ -105,7 +105,7 @@ export function RansomwareTracker() {
     if (!searchQuery.trim()) return;
     setSearchLoading(true);
     setSearchResults(null);
-    fetch(`${API_BASE}/api/ransomware/victims/search/${encodeURIComponent(searchQuery.trim())}`)
+    fetch(`${API_BASE}/ransomware/victims/search/${encodeURIComponent(searchQuery.trim())}`)
       .then(r => r.json())
       .then(data => {
         if (data.error) throw new Error(data.message);
@@ -120,7 +120,7 @@ export function RansomwareTracker() {
     setSelectedGroup(groupName);
     setGroupLoading(true);
     setGroupVictims(null);
-    fetch(`${API_BASE}/api/ransomware/group/${encodeURIComponent(groupName)}/victims`)
+    fetch(`${API_BASE}/ransomware/group/${encodeURIComponent(groupName)}/victims`)
       .then(r => r.json())
       .then(data => setGroupVictims(Array.isArray(data) ? data : []))
       .catch(() => setGroupVictims([]))
@@ -132,7 +132,7 @@ export function RansomwareTracker() {
     setSelectedCountry(countryCode);
     setCountryLoading(true);
     setCountryVictims(null);
-    fetch(`${API_BASE}/api/ransomware/victims/country/${countryCode}`)
+    fetch(`${API_BASE}/ransomware/victims/country/${countryCode}`)
       .then(r => r.json())
       .then(data => setCountryVictims(Array.isArray(data) ? data : []))
       .catch(() => setCountryVictims([]))
