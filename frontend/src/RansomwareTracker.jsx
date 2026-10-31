@@ -841,6 +841,7 @@ export function RansomwareTracker() {
   const [countryLoading, setCountryLoading] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
   const [groupSearch, setGroupSearch] = useState("");
+  const [copiedIndex, setCopiedIndex] = useState(null);
 
   /* ── load dashboard ── */
   useEffect(() => {
@@ -1038,56 +1039,76 @@ export function RansomwareTracker() {
             <span>Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "—"}</span>
           </div>
 
-          <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 600 }}>
-                <thead>
-                  <tr style={{ background: "var(--bg-tertiary)" }}>
-                    <th style={thStyle}>When</th>
-                    <th style={thStyle}>Group</th>
-                    <th style={thStyle}>Victim</th>
-                    <th style={thStyle}>Country</th>
-                    <th style={thStyle}>Sector</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredVictims.slice(0, 100).map((v, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid var(--border)" }}
-                      onMouseOver={e => e.currentTarget.style.background = "var(--bg-tertiary)"}
-                      onMouseOut={e => e.currentTarget.style.background = "transparent"}>
-                      <td style={tdStyle}>
-                        <span className="mono" style={{ fontSize: 11, color: "var(--text-muted)" }}>{timeAgo(v.discovered)}</span>
-                      </td>
-                      <td style={tdStyle}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {filteredVictims.slice(0, 100).map((v, i) => {
+              const tweetTemplates = [
+                `${v.group_name} just added ${v.victim}${v.country_name ? ` from ${v.country_name}` : ""} to their leak site.${v.activity && v.activity !== "Not Found" ? ` They're in the ${v.activity} sector.` : ""}\n\nThis is why no organization is too big or too small to be a target.\n\n#Ransomware #CyberSecurity`,
+                `Another day, another ransomware hit.\n\n${v.victim}${v.country_name ? ` (${v.country_name})` : ""} appears on ${v.group_name}'s victim list.${v.activity && v.activity !== "Not Found" ? ` Sector: ${v.activity}.` : ""}\n\nStay vigilant, patch your systems, back up your data.\n\n#InfoSec #ThreatIntel`,
+                `${v.group_name} has claimed ${v.victim}${v.country_name ? ` in ${v.country_name}` : ""} as their latest victim.${v.activity && v.activity !== "Not Found" ? `\n\nThe ${v.activity} sector continues to be under fire.` : ""}\n\nOrganizations — take ransomware seriously before it's too late.\n\n#CyberSecurity #Ransomware`,
+                `Breaking: ${v.victim}${v.country_name ? ` (${v.country_name})` : ""} hit by ${v.group_name} ransomware group.${v.activity && v.activity !== "Not Found" ? `\n\n${v.activity} sector targeted once again.` : ""}\n\nA reminder to review your incident response plans today, not tomorrow.\n\n#Ransomware #InfoSec`,
+              ];
+              const tweetText = tweetTemplates[i % tweetTemplates.length];
+              const isCopied = copiedIndex === i;
+              return (
+                <div key={i} className="card" style={{ padding: 16, transition: "border-color 0.2s" }}
+                  onMouseOver={e => e.currentTarget.style.borderColor = "var(--accent)"}
+                  onMouseOut={e => e.currentTarget.style.borderColor = "var(--border)"}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                    {/* Main content */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
                         <span onClick={() => { setTab("groups"); loadGroupVictims(v.group_name); }}
-                          style={{ color: "var(--accent)", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>
+                          style={{ padding: "3px 10px", borderRadius: 5, fontSize: 12, fontWeight: 700, background: "rgba(255,61,61,0.15)", color: "var(--accent)", cursor: "pointer", border: "1px solid rgba(255,61,61,0.3)" }}>
                           {v.group_name}
                         </span>
-                      </td>
-                      <td style={tdStyle}>
-                        <div style={{ fontWeight: 500 }}>{v.victim}</div>
-                        {v.website && (
-                          <div style={{ fontSize: 11, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200 }}>
-                            {v.website}
-                          </div>
-                        )}
-                      </td>
-                      <td style={tdStyle}>
-                        {v.country ? (
+                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>claimed</span>
+                        <span className="mono" style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>{timeAgo(v.discovered)}</span>
+                      </div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
+                        {v.victim}
+                      </div>
+                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12 }}>
+                        {v.country && (
                           <span onClick={() => { setTab("countries"); loadCountryVictims(v.country); }}
                             style={{ cursor: "pointer", color: "var(--info)" }}>
                             {countryFlag(v.country)} {v.country_name || v.country}
                           </span>
-                        ) : "—"}
-                      </td>
-                      <td style={tdStyle}>
-                        <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{v.activity || "—"}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        )}
+                        {v.activity && v.activity !== "Not Found" && (
+                          <span style={{ color: "var(--text-secondary)" }}>
+                            📁 {v.activity}
+                          </span>
+                        )}
+                        {v.website && (
+                          <span style={{ color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200, fontSize: 11 }}>
+                            🔗 {v.website}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Copy Tweet button */}
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(tweetText).then(() => {
+                          setCopiedIndex(i);
+                          setTimeout(() => setCopiedIndex(null), 2000);
+                        });
+                      }}
+                      style={{
+                        padding: "6px 12px", borderRadius: 6, fontSize: 11, fontWeight: 600,
+                        border: `1px solid ${isCopied ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
+                        background: isCopied ? "rgba(81,207,102,0.1)" : "var(--bg-tertiary)",
+                        color: isCopied ? "#51cf66" : "var(--text-secondary)",
+                        cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {isCopied ? "✓ Copied!" : "📋 Copy Tweet"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
