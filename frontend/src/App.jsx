@@ -779,7 +779,7 @@ export default function App() {
           <span style={{ color: "var(--text-muted)" }}>·</span>
           <button className="footer-legal-link" onClick={() => { setPage("terms"); window.scrollTo(0,0); }}>Terms of Service</button>
           <span style={{ color: "var(--text-muted)" }}>·</span>
-          <button className="footer-legal-link" onClick={() => { setPage("sources"); window.scrollTo(0,0); }}>Data Sources</button>
+          <button className="footer-legal-link" onClick={() => { setPage("sources"); window.scrollTo(0,0); }}>Intelligence Sources</button>
           <span style={{ color: "var(--text-muted)" }}>·</span>
           <button className="footer-legal-link" onClick={() => { setPage("disclaimer"); window.scrollTo(0,0); }}>Disclaimer</button>
         </div>

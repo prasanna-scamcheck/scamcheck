@@ -63,7 +63,7 @@ export function PrivacyPolicy() {
           <p>
             Our intelligence database is populated from publicly available threat intelligence
             feeds, community-submitted reports, and open-source cybersecurity databases.
-            See our <strong>Data Sources</strong> page for a full list of intelligence sources and their licenses.
+            See our <strong>Intelligence Sources</strong> page for details on our intelligence categories.
           </p>
         </section>
 
@@ -208,8 +208,8 @@ export function TermsOfService() {
           <h3>7. Intellectual Property</h3>
           <p>
             The CyberIntelEngine platform, including its design, code, and branding, is our
-            intellectual property. Threat intelligence data sourced from third-party
-            feeds is subject to their respective licenses (see Data Sources page).
+            intellectual property. Threat intelligence data is aggregated from open-source
+            intelligence feeds (see Intelligence Sources page).
             User-submitted reports become part of the CyberIntelEngine intelligence database
             and may be shared with law enforcement and cybersecurity organizations.
           </p>
@@ -277,134 +277,91 @@ export function TermsOfService() {
    DATA SOURCES & ATTRIBUTION
    ══════════════════════════════════════════════════════════════════ */
 export function DataSources() {
-  const sources = [
+  const categories = [
     {
-      name: "URLhaus",
-      org: "abuse.ch (Bern University of Applied Sciences)",
-      url: "https://urlhaus.abuse.ch",
-      data: "Malware distribution URLs and domains",
-      license: "CC0 (Public Domain)",
-      commercial: true,
+      icon: "🦠",
+      name: "Malware Intelligence",
+      description: "Real-time feeds tracking malware distribution URLs, malicious domains, and active threat campaigns across the internet.",
+      capabilities: ["Malicious URL detection", "Malware distribution tracking", "Drive-by download identification"],
     },
     {
-      name: "Feodo Tracker",
-      org: "abuse.ch",
-      url: "https://feodotracker.abuse.ch",
-      data: "Banking trojan command & control servers",
-      license: "CC0 (Public Domain)",
-      commercial: true,
+      icon: "🎣",
+      name: "Phishing Detection",
+      description: "Aggregated phishing intelligence from community-verified databases and automated detection systems worldwide.",
+      capabilities: ["Phishing URL identification", "Brand impersonation detection", "Credential harvesting alerts"],
     },
     {
-      name: "SSL Blacklist",
-      org: "abuse.ch",
-      url: "https://sslbl.abuse.ch",
-      data: "Malicious SSL certificates and IPs",
-      license: "CC0 (Public Domain)",
-      commercial: true,
+      icon: "🔓",
+      name: "Breach Monitoring",
+      description: "Monitoring of data breach disclosures and compromised credential databases to alert affected users and organizations.",
+      capabilities: ["Email breach detection", "Domain exposure monitoring", "Credential compromise alerts"],
     },
     {
-      name: "ThreatFox",
-      org: "abuse.ch",
-      url: "https://threatfox.abuse.ch",
-      data: "Indicators of Compromise (IOCs)",
-      license: "CC0 (Public Domain)",
-      commercial: true,
+      icon: "🤖",
+      name: "Botnet & C2 Tracking",
+      description: "Intelligence on active botnet command-and-control infrastructure, banking trojans, and remote access threats.",
+      capabilities: ["C&C server tracking", "Banking trojan detection", "RAT infrastructure monitoring"],
     },
     {
-      name: "PhishTank",
-      org: "OpenDNS / Cisco",
-      url: "https://phishtank.org",
-      data: "Community-verified phishing URLs",
-      license: "Free with attribution",
-      commercial: true,
-      attribution: "Phishing data provided by PhishTank (phishtank.org)"
+      icon: "🔒",
+      name: "SSL & Certificate Threats",
+      description: "Detection of malicious SSL certificates and suspicious TLS configurations used in man-in-the-middle attacks.",
+      capabilities: ["Rogue certificate detection", "SSL abuse identification", "TLS anomaly analysis"],
     },
     {
-      name: "OpenPhish",
-      org: "OpenPhish",
-      url: "https://openphish.com",
-      data: "Phishing URLs detected by automated analysis",
-      license: "Community feed — free for non-commercial; check terms for commercial",
-      commercial: false,
+      icon: "🕵️",
+      name: "Indicators of Compromise",
+      description: "Curated IOC feeds covering file hashes, IP addresses, domains, and URLs linked to active cyber threats.",
+      capabilities: ["IOC correlation", "Threat actor attribution", "Campaign tracking"],
     },
     {
-      name: "Blocklist.de",
-      org: "Blocklist.de",
-      url: "https://www.blocklist.de",
-      data: "IPs reported for brute force, SSH attacks, spam",
-      license: "Free for all use",
-      commercial: true,
+      icon: "💀",
+      name: "Ransomware Intelligence",
+      description: "Monitoring of ransomware group activities, victim claims, leak sites, and evolving tactics across the threat landscape.",
+      capabilities: ["Group activity tracking", "Victim claim monitoring", "TTP analysis & kill chain mapping"],
     },
     {
-      name: "Have I Been Pwned",
-      org: "Troy Hunt",
-      url: "https://haveibeenpwned.com",
-      data: "Data breach records and breached domain list",
-      license: "Public breach list freely available; API has separate terms",
-      commercial: true,
+      icon: "🇮🇳",
+      name: "India-Specific Intelligence",
+      description: "Curated threat data targeting Indian citizens — UPI fraud, banking scams, telecom fraud, and region-specific cyber threats.",
+      capabilities: ["UPI/banking fraud detection", "Telecom scam identification", "India-focused threat indicators"],
     },
     {
-      name: "Ransomwatch",
-      org: "Josh Highet (open source)",
-      url: "https://github.com/joshhighet/ransomwatch",
-      data: "Ransomware gang leak site monitoring",
-      license: "MIT License",
-      commercial: true,
-    },
-    {
-      name: "Disposable Email Domains",
-      org: "Community maintained",
-      url: "https://github.com/disposable-email-domains/disposable-email-domains",
-      data: "List of disposable/temporary email domains",
-      license: "MIT License",
-      commercial: true,
-    },
-    {
+      icon: "👥",
       name: "Community Reports",
-      org: "CyberIntelEngine Users",
-      url: null,
-      data: "Fraud reports submitted by Indian citizens through CyberIntelEngine",
-      license: "CyberIntelEngine proprietary",
-      commercial: true,
+      description: "Citizen-submitted fraud reports verified through our moderation pipeline, strengthening the intelligence database for everyone.",
+      capabilities: ["Crowd-sourced scam reports", "Moderated verification", "Cross-referencing with threat feeds"],
     },
   ];
 
   return (
     <div className="legal-page">
-      <h2>Data Sources & Attribution</h2>
-      <p className="legal-date">Transparency about where our intelligence data comes from</p>
+      <h2>Intelligence Sources</h2>
+      <p className="legal-date">How CyberIntelEngine builds its threat intelligence</p>
 
       <div className="legal-content">
         <section>
-          <h3>Our Intelligence Sources</h3>
+          <h3>Our Intelligence Pipeline</h3>
           <p>
-            CyberIntelEngine aggregates cybercrime intelligence from multiple trusted, publicly
-            available sources maintained by cybersecurity researchers, organizations, and
-            the global security community. Below is a complete list of our data sources,
-            their providers, and licensing terms.
+            CyberIntelEngine operates a multi-layered intelligence pipeline that aggregates,
+            correlates, and enriches threat data from open-source intelligence (OSINT) feeds,
+            community databases, and proprietary research. Our engine processes data across
+            the following intelligence categories:
           </p>
         </section>
 
         <div className="sources-grid">
-          {sources.map((s, i) => (
+          {categories.map((c, i) => (
             <div key={i} className="source-card">
               <div className="source-header">
-                <span className="source-name">{s.name}</span>
-                <span className={`source-badge ${s.commercial ? "open" : "restricted"}`}>
-                  {s.commercial ? "Open Use" : "Check Terms"}
-                </span>
+                <span className="source-name">{c.icon} {c.name}</span>
               </div>
-              <div className="source-org">{s.org}</div>
-              <div className="source-data">{s.data}</div>
-              <div className="source-license">License: {s.license}</div>
-              {s.url && (
-                <a href={s.url} target="_blank" rel="noopener noreferrer" className="source-link">
-                  {s.url} ↗
-                </a>
-              )}
-              {s.attribution && (
-                <div className="source-attribution">Attribution: {s.attribution}</div>
-              )}
+              <div className="source-data">{c.description}</div>
+              <div style={{ marginTop: 8 }}>
+                {c.capabilities.map((cap, j) => (
+                  <div key={j} style={{ fontSize: 12, color: "var(--text-muted)", padding: "2px 0" }}>→ {cap}</div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -413,7 +370,7 @@ export function DataSources() {
           <h3>Data Accuracy Disclaimer</h3>
           <p>
             While we strive to maintain accurate and up-to-date threat intelligence,
-            CyberIntelEngine cannot guarantee the accuracy of data from third-party sources.
+            CyberIntelEngine cannot guarantee the accuracy of data from all sources.
             False positives may occur. If you believe an indicator has been incorrectly
             flagged, please submit a dispute through our platform.
           </p>
@@ -431,12 +388,10 @@ export function DataSources() {
         <section>
           <h3>Acknowledgments</h3>
           <p>
-            We extend our gratitude to the cybersecurity research community, particularly
-            abuse.ch, PhishTank, Have I Been Pwned, and all open-source contributors
-            who make threat intelligence freely available to protect internet users worldwide.
-          </p>
-          <p>
-            Phishing data powered by <a href="https://phishtank.org" target="_blank" rel="noopener noreferrer">PhishTank</a>.
+            CyberIntelEngine is built on the shoulders of the global cybersecurity community.
+            We are grateful to the open-source researchers, CERT teams, and threat intelligence
+            organizations who make critical security data freely available to protect internet
+            users worldwide.
           </p>
         </section>
       </div>

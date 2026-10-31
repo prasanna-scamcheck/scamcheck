@@ -52,7 +52,7 @@ export function AboutPage() {
         <div className="card-title">What CyberIntelEngine Does</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           {[
-            ["🔍", "Intelligence Search", "Search any phone number, UPI ID, bank account, email, domain, or crypto wallet against our database of 2,847+ real threat indicators sourced from global cybercrime feeds."],
+            ["🔍", "Intelligence Search", "Search any phone number, UPI ID, bank account, email, domain, or crypto wallet against our database of 2,847+ real threat indicators powered by our intelligence engine."],
             ["🔮", "Scam Playbook Predictor", "Paste any suspicious message — WhatsApp, SMS, email, or call description — and instantly see the complete scam DNA: every step the scammer takes, red flags, money trail, and prevention tips."],
             ["📊", "Risk Scoring", "Every indicator gets a risk score from 0-100 based on complaint count, linked indicators, report frequency, and verified confirmations. Clear categories: Safe, Suspicious, High Risk, Confirmed Fraud."],
             ["🔗", "Linked Intelligence", "If one scam indicator appears in multiple reports, we automatically map the connections — phone to UPI to bank account to domain — revealing entire fraud networks."],
@@ -144,7 +144,7 @@ export function AboutPage() {
           </div>
           <div>
             <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Intelligence Feeds</div>
-            {["URLhaus (abuse.ch)", "PhishTank (Cisco)", "Have I Been Pwned", "OpenPhish", "Feodo Tracker", "SSL Blacklist", "India-specific curated data"].map(t => (
+            {["Malware URL intelligence", "Phishing detection feeds", "Data breach monitoring", "Botnet C&C tracking", "SSL threat analysis", "IOC aggregation", "India-specific curated data"].map(t => (
               <div key={t} style={{ fontSize: 13, color: "var(--text-secondary)", padding: "4px 0" }}>→ {t}</div>
             ))}
           </div>

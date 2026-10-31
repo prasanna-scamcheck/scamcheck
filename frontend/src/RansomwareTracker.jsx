@@ -940,7 +940,7 @@ export function RansomwareTracker() {
       <div style={{ textAlign: "center", padding: 80 }}>
         <div className="pulse" style={{ fontSize: 48, marginBottom: 16 }}>🔴</div>
         <div style={{ fontSize: 18, fontWeight: 600 }}>Loading Global Ransomware Intelligence...</div>
-        <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>Pulling live data from ransomware.live API</div>
+        <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>Aggregating global threat intelligence feeds...</div>
       </div>
     );
   }
@@ -974,7 +974,7 @@ export function RansomwareTracker() {
           Global Ransomware <span style={{ color: "var(--accent)" }}>Threat Tracker</span>
         </h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14, maxWidth: 600, margin: "0 auto" }}>
-          Real-time ransomware group activity, victim claims, and threat intelligence across all countries — powered by ransomware.live
+          Real-time ransomware group activity, victim claims, and threat intelligence across all countries
         </p>
       </div>
 
@@ -1419,7 +1419,7 @@ export function RansomwareTracker() {
 
       {/* ── Footer ── */}
       <div style={{ textAlign: "center", padding: "24px 0", marginTop: 32, borderTop: "1px solid var(--border)", fontSize: 11, color: "var(--text-muted)", lineHeight: 1.8 }}>
-        Global data sourced from <a href="https://www.ransomware.live" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>ransomware.live</a> API
+        Threat data aggregated from open-source intelligence feeds
         {" · "} Refreshed every 15 minutes · Covers all countries worldwide
         <br />
         CyberIntelEngine is not responsible for the accuracy of third-party threat intelligence data
