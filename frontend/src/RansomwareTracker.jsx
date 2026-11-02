@@ -4,7 +4,7 @@ const API_BASE = process.env.REACT_APP_API_URL || "https://scamcheck-api-india.o
 
 /* ─── helpers ───────────────────────────────────────────────────── */
 function timeAgo(dateStr) {
-  if (!dateStr) return "—";
+  if (!dateStr) return "";
   try {
     const d = new Date(dateStr.replace(" ", "T"));
     const diff = (Date.now() - d.getTime()) / 1000;
@@ -168,7 +168,7 @@ function ThreatPulse({ dashboard }) {
              " Ransomware activity is within normal range."}
           </div>
           <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>
-            Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "—"}
+            Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "..."}
           </div>
         </div>
       </div>
@@ -320,7 +320,7 @@ const GROUP_INTEL = {
       { stage: "Initial Access", icon: "🎯", technique: "Zero-day exploits (MOVEit, GoAnywhere, Accellion), supply chain attacks", mitre: "T1190, T1195" },
       { stage: "Execution", icon: "⚡", technique: "Web shells, SQL injection payloads, file transfer exploitation", mitre: "T1505.003" },
       { stage: "Persistence", icon: "🔗", technique: "Web shells, backdoor implants on file transfer servers", mitre: "T1505" },
-      { stage: "Lateral Movement", icon: "🕸️", technique: "Often unnecessary — mass exploitation of internet-facing apps", mitre: "T1210" },
+      { stage: "Lateral Movement", icon: "🕸️", technique: "Often unnecessary, relies on mass exploitation of internet-facing apps", mitre: "T1210" },
       { stage: "Exfiltration", icon: "📤", technique: "Direct download from compromised file transfer platforms", mitre: "T1530" },
       { stage: "Impact", icon: "💀", technique: "Data theft + extortion (often no encryption), mass victim campaigns", mitre: "T1657" },
     ],
@@ -815,7 +815,7 @@ function RiskAssessment({ dashboard }) {
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.6 }}>Industry / Sector</div>
             <select value={sector} onChange={e => { setSector(e.target.value); setResult(null); }}
               style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 13 }}>
-              <option value="">— Select sector —</option>
+              <option value="">Select sector</option>
               {sectors.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
@@ -823,7 +823,7 @@ function RiskAssessment({ dashboard }) {
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.6 }}>Country</div>
             <select value={country} onChange={e => { setCountry(e.target.value); setResult(null); }}
               style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 13 }}>
-              <option value="">— Select country —</option>
+              <option value="">Select country</option>
               {allCountries.map(c => <option key={c.code} value={c.code}>{countryFlag(c.code)} {c.name}</option>)}
             </select>
           </div>
@@ -931,6 +931,27 @@ export function RansomwareTracker() {
   const [kevSearch, setKevSearch] = useState("");
   const [kevLimit, setKevLimit] = useState(50);
   const [expandedKev, setExpandedKev] = useState(null);
+
+  /* ── reusable tweet generator ── */
+  const buildVictimTweet = (v) => {
+    const dataPart = v.data_size ? ` with approximately ${v.data_size} of data` : "";
+    const countryPart = v.country_name ? ` in ${v.country_name}` : "";
+    const sectorPart = v.activity && v.activity !== "Not Found" ? ` (${v.activity} sector)` : "";
+    const templates = [
+      `${v.group_name} has claimed an attack on ${v.victim}${countryPart}${sectorPart}${dataPart}.\n\nNo organization is immune. Stay informed, stay prepared.\n\nTrack live: https://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`,
+      `${v.victim}${countryPart} has been listed on ${v.group_name}'s leak site.${dataPart ? `\n\nReported data exposure: ${v.data_size}.` : ""}\n\nPatch your systems. Back up your data. Today, not tomorrow.\n\nhttps://cyberintelengine.com\n\n#InfoSec #Ransomware`,
+      `${v.group_name} targets ${v.victim}${countryPart}${dataPart}.\n\n${v.activity && v.activity !== "Not Found" ? `The ${v.activity} sector continues to face threats. ` : ""}Review your incident response plans now.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #ThreatIntel`,
+      `New ransomware claim detected:\n\nGroup: ${v.group_name}\nTarget: ${v.victim}${v.country_name ? `\nCountry: ${v.country_name}` : ""}${v.data_size ? `\nData: approximately ${v.data_size}` : ""}${v.activity && v.activity !== "Not Found" ? `\nSector: ${v.activity}` : ""}\n\nTrack all claims live:\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+    ];
+    return templates[Math.floor(Math.random() * templates.length)];
+  };
+
+  const copyTweet = (text, key) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIndex(key);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    });
+  };
 
   /* ── load dashboard ── */
   useEffect(() => {
@@ -1078,8 +1099,8 @@ export function RansomwareTracker() {
           [stats.total_recent_victims || 0, "Global Victims", "var(--accent)"],
           [stats.total_groups || 0, "Active Groups", "var(--high-risk)"],
           [stats.total_countries_hit || 0, "Countries Hit", "var(--warning)"],
-          [stats.top_group || "—", "Most Active Group", "var(--info)"],
-          [stats.top_country ? `${countryFlag(stats.top_country_code)} ${stats.top_country}` : "—", "Most Targeted", "var(--safe)"],
+          [stats.top_group || "N/A", "Most Active Group", "var(--info)"],
+          [stats.top_country ? `${countryFlag(stats.top_country_code)} ${stats.top_country}` : "N/A", "Most Targeted", "var(--safe)"],
         ].map(([num, label, color]) => (
           <div key={label} className="card" style={{ textAlign: "center", padding: 16 }}>
             <div className="mono" style={{ fontSize: 20, fontWeight: 700, color }}>{num}</div>
@@ -1138,7 +1159,7 @@ export function RansomwareTracker() {
 
           <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12, display: "flex", justifyContent: "space-between" }}>
             <span>Showing {filteredVictims.length} claims worldwide</span>
-            <span>Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "—"}</span>
+            <span>Updated: {dashboard?.last_updated ? new Date(dashboard.last_updated).toLocaleString("en-IN") : "..."}</span>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -1151,17 +1172,7 @@ export function RansomwareTracker() {
               const hasEnrichedData = hasDataSize || hasPostUrl || hasAttackDate || hasDescription || hasInfostealer;
               const isExpanded = expandedCard === i;
 
-              /* Build richer tweet text */
-              const dataSizePart = hasDataSize ? ` (~${v.data_size} exfiltrated)` : "";
-              const sectorPart = v.activity && v.activity !== "Not Found" ? ` [${v.activity}]` : "";
-              const tweetTemplates = [
-                `${v.group_name} claimed ${v.victim}${v.country_name ? ` (${v.country_name})` : ""}${sectorPart}${dataSizePart}\n\nNo organization is too big or too small to be a target.\n\nTrack live: https://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`,
-                `${v.victim}${v.country_name ? ` in ${v.country_name}` : ""} added to ${v.group_name}'s leak site.${dataSizePart}${sectorPart}\n\nPatch your systems. Back up your data. Today.\n\nLive tracking: https://cyberintelengine.com\n\n#InfoSec #Ransomware`,
-                `${v.group_name} hits ${v.victim}${v.country_name ? ` (${v.country_name})` : ""}${dataSizePart}\n\n${v.activity && v.activity !== "Not Found" ? `The ${v.activity} sector remains under fire. ` : ""}Review your incident response plans today, not tomorrow.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #ThreatIntel`,
-                `New ransomware claim:\n\nGroup: ${v.group_name}\nTarget: ${v.victim}${v.country_name ? `\nCountry: ${v.country_name}` : ""}${hasDataSize ? `\nData: ${v.data_size}` : ""}${sectorPart ? `\nSector: ${v.activity}` : ""}\n\nTrack all claims live at https://cyberintelengine.com\n\n#Ransomware #InfoSec`,
-              ];
-              const tweetText = tweetTemplates[i % tweetTemplates.length];
-              const isCopied = copiedIndex === i;
+              const tweetText = buildVictimTweet(v);
 
               return (
                 <div key={i} className="card" style={{
@@ -1307,22 +1318,16 @@ export function RansomwareTracker() {
                       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                         {/* Copy Tweet */}
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigator.clipboard.writeText(tweetText).then(() => {
-                              setCopiedIndex(i);
-                              setTimeout(() => setCopiedIndex(null), 2000);
-                            });
-                          }}
+                          onClick={(e) => { e.stopPropagation(); copyTweet(tweetText, `feed-${i}`); }}
                           style={{
                             padding: "8px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
-                            border: `1px solid ${isCopied ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
-                            background: isCopied ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)",
-                            color: isCopied ? "#51cf66" : "var(--text-secondary)",
+                            border: `1px solid ${copiedIndex === `feed-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
+                            background: copiedIndex === `feed-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)",
+                            color: copiedIndex === `feed-${i}` ? "#51cf66" : "var(--text-secondary)",
                             cursor: "pointer", transition: "all 0.2s",
                           }}
                         >
-                          {isCopied ? "✓ Copied!" : "📋 Copy Tweet"}
+                          {copiedIndex === `feed-${i}` ? "✓ Copied!" : "📋 Copy Tweet"}
                         </button>
 
                         {/* View Group Profile */}
@@ -1546,7 +1551,7 @@ export function RansomwareTracker() {
                                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 14 }}>
                                   <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
                                     <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Vendor / Product</div>
-                                    <div style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{entry.vendor} — {entry.product}</div>
+                                    <div style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{entry.vendor} / {entry.product}</div>
                                   </div>
                                   <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
                                     <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Remediation Deadline</div>
@@ -1557,7 +1562,7 @@ export function RansomwareTracker() {
                                   <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
                                     <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Ransomware Campaign Use</div>
                                     <div style={{ fontSize: 13, fontWeight: 600, color: entry.ransomware_use ? "#ff3d3d" : "#51cf66" }}>
-                                      {entry.ransomware_use ? "Known — actively used by ransomware groups" : "Unknown"}
+                                      {entry.ransomware_use ? "Known, actively used by ransomware groups" : "Unknown"}
                                     </div>
                                   </div>
                                 </div>
@@ -1598,7 +1603,12 @@ export function RansomwareTracker() {
                                 {/* Copy tweet */}
                                 <button
                                   onClick={() => {
-                                    const tweet = `${entry.cve_id} (${entry.vendor} ${entry.product}) is on CISA's Known Exploited Vulnerabilities list.${entry.ransomware_use ? "\n\nThis vulnerability is actively used in ransomware campaigns." : ""}\n\n${entry.name}\n\nPatch now. Don't wait.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #CISA #KEV ${entry.ransomware_use ? "#Ransomware" : ""}`;
+                                    const kevTemplates = [
+                      `${entry.cve_id} affecting ${entry.vendor} ${entry.product} is listed on CISA's Known Exploited Vulnerabilities catalog.${entry.ransomware_use ? "\n\nThis vulnerability is actively used in ransomware campaigns." : ""}\n\n${entry.name}\n\nPatch now. Don't wait.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #CISA #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `CISA has flagged ${entry.cve_id} (${entry.vendor} ${entry.product}) as actively exploited in the wild.${entry.ransomware_use ? " Known ransomware groups are leveraging this vulnerability." : ""}\n\nIs your organization patched?\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #PatchNow #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `${entry.name}\n\n${entry.cve_id} in ${entry.vendor} ${entry.product} is being actively exploited.${entry.ransomware_use ? " Ransomware groups are known to use this." : ""}\n\nCheck your exposure. Patch today.\n\nhttps://cyberintelengine.com\n\n#InfoSec #CISA #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                    ];
+                    const tweet = kevTemplates[Math.floor(Math.random() * kevTemplates.length)];
                                     navigator.clipboard.writeText(tweet).then(() => {
                                       setCopiedIndex(`kev-${i}`);
                                       setTimeout(() => setCopiedIndex(null), 2000);
@@ -1685,6 +1695,7 @@ export function RansomwareTracker() {
                             <th style={thStyle}>Group</th>
                             <th style={thStyle}>Victim</th>
                             <th style={thStyle}>Sector</th>
+                            <th style={thStyle}></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1696,7 +1707,13 @@ export function RansomwareTracker() {
                                   style={{ color: "var(--accent)", cursor: "pointer", fontWeight: 600, fontSize: 12 }}>{v.group_name}</span>
                               </td>
                               <td style={tdStyle}>{v.victim}</td>
-                              <td style={tdStyle}><span style={{ fontSize: 11 }}>{v.activity || "—"}</span></td>
+                              <td style={tdStyle}><span style={{ fontSize: 11 }}>{v.activity || ""}</span></td>
+                              <td style={tdStyle}>
+                                <button onClick={() => copyTweet(buildVictimTweet(v), `country-${i}`)}
+                                  style={{ padding: "4px 10px", borderRadius: 5, fontSize: 11, fontWeight: 600, border: `1px solid ${copiedIndex === `country-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === `country-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === `country-${i}` ? "#51cf66" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>
+                                  {copiedIndex === `country-${i}` ? "✓ Copied" : "📋 Tweet"}
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -1777,6 +1794,7 @@ export function RansomwareTracker() {
                           <th style={thStyle}>Victim</th>
                           <th style={thStyle}>Country</th>
                           <th style={thStyle}>Sector</th>
+                          <th style={thStyle}></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1790,9 +1808,15 @@ export function RansomwareTracker() {
                                   style={{ cursor: "pointer", color: "var(--info)" }}>
                                   {countryFlag(v.country)} {v.country_name || v.country}
                                 </span>
-                              ) : "—"}
+                              ) : ""}
                             </td>
-                            <td style={tdStyle}><span style={{ fontSize: 11 }}>{v.activity || "—"}</span></td>
+                            <td style={tdStyle}><span style={{ fontSize: 11 }}>{v.activity || ""}</span></td>
+                            <td style={tdStyle}>
+                              <button onClick={() => copyTweet(buildVictimTweet({...v, group_name: v.group_name || selectedGroup}), `group-${i}`)}
+                                style={{ padding: "4px 10px", borderRadius: 5, fontSize: 11, fontWeight: 600, border: `1px solid ${copiedIndex === `group-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === `group-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === `group-${i}` ? "#51cf66" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>
+                                {copiedIndex === `group-${i}` ? "✓ Copied" : "📋 Tweet"}
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1843,6 +1867,20 @@ export function RansomwareTracker() {
       {/* ═══ TAB: Analytics (GLOBAL) ══════════════════════════════ */}
       {tab === "analytics" && (
         <div>
+          {/* Share analytics tweet */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+            <button onClick={() => {
+              const total = dashboard?.recent_victims?.length || 0;
+              const groups = dashboard?.top_groups?.length || 0;
+              const countries = dashboard?.all_countries?.length || 0;
+              const topGroup = dashboard?.top_groups?.[0]?.name || "Unknown";
+              const tweet = `Global ransomware snapshot:\n\n${total}+ victims tracked recently\n${groups} active ransomware groups\n${countries} countries affected\nMost active group: ${topGroup}\n\nReal-time tracking and threat intelligence at:\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`;
+              copyTweet(tweet, "analytics");
+            }}
+              style={{ padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600, border: `1px solid ${copiedIndex === "analytics" ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === "analytics" ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === "analytics" ? "#51cf66" : "var(--text-secondary)", cursor: "pointer" }}>
+              {copiedIndex === "analytics" ? "✓ Copied!" : "📋 Share Stats Tweet"}
+            </button>
+          </div>
           <div className="card" style={{ marginBottom: 16 }}>
             <div className="card-title">Global Attack Timeline (Last 30 Days)</div>
             <Sparkline data={dashboard?.timeline || []} />
@@ -1916,6 +1954,7 @@ export function RansomwareTracker() {
                         <th style={thStyle}>Group</th>
                         <th style={thStyle}>Victim</th>
                         <th style={thStyle}>Country</th>
+                        <th style={thStyle}></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1924,7 +1963,13 @@ export function RansomwareTracker() {
                           <td style={tdStyle}><span className="mono" style={{ fontSize: 11 }}>{timeAgo(v.discovered)}</span></td>
                           <td style={tdStyle}><span style={{ color: "var(--accent)", fontWeight: 600, fontSize: 12 }}>{v.group_name}</span></td>
                           <td style={tdStyle}>{v.victim}</td>
-                          <td style={tdStyle}>{v.country ? `${countryFlag(v.country)} ${v.country_name || v.country}` : "—"}</td>
+                          <td style={tdStyle}>{v.country ? `${countryFlag(v.country)} ${v.country_name || v.country}` : ""}</td>
+                          <td style={tdStyle}>
+                            <button onClick={() => copyTweet(buildVictimTweet(v), `search-${i}`)}
+                              style={{ padding: "4px 10px", borderRadius: 5, fontSize: 11, fontWeight: 600, border: `1px solid ${copiedIndex === `search-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === `search-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === `search-${i}` ? "#51cf66" : "var(--text-secondary)", cursor: "pointer", whiteSpace: "nowrap" }}>
+                              {copiedIndex === `search-${i}` ? "✓ Copied" : "📋 Tweet"}
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
