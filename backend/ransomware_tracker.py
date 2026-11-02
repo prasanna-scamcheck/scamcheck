@@ -124,31 +124,34 @@ async def get_recent_victims(limit: int = 0):
     if cached:
         return cached[:limit] if limit > 0 else cached
 
-    # Paginate through the API to fetch ALL victims
+    # The /recentvictims endpoint only returns 100 victims.
+    # To get more, fetch victims by month using /victims/<year>/<month>
+    # for the current month and previous months.
     all_victims = []
-    page_size = 200  # max per request
-    offset = 0
-    max_pages = 50   # safety cap to avoid infinite loops
+    seen = set()  # deduplicate by (group_name, victim, discovered)
+    now = datetime.utcnow()
 
-    for _ in range(max_pages):
-        url = f"{RANSOMWARE_LIVE_BASE}/recentvictims?limit={page_size}&offset={offset}"
-        data = await _fetch_json(url)
+    # Fetch current month + last 5 months (6 months total)
+    for months_ago in range(6):
+        dt = now - timedelta(days=months_ago * 30)
+        year = dt.year
+        month = dt.month
+        url = f"{RANSOMWARE_LIVE_BASE}/victims/{year}/{month}"
+        data = await _fetch_json(url, timeout=45.0)
 
         if isinstance(data, dict) and "error" in data:
-            # If first page fails, return the error; otherwise return what we have
-            if not all_victims:
-                return data
-            break
+            continue  # skip failed months, try the rest
 
-        if not isinstance(data, list) or len(data) == 0:
-            break
+        if isinstance(data, list):
+            for v in data:
+                # Deduplicate
+                key = (v.get("group_name", ""), v.get("victim", ""), v.get("discovered", ""))
+                if key not in seen:
+                    seen.add(key)
+                    all_victims.append(v)
 
-        all_victims.extend(data)
-        offset += len(data)
-
-        # If we got fewer than requested, we've reached the end
-        if len(data) < page_size:
-            break
+    # Sort by discovered date, newest first
+    all_victims.sort(key=lambda v: v.get("discovered", ""), reverse=True)
 
     victims = [_normalize_victim(v) for v in all_victims]
     _set_cached("recent_victims", victims)
