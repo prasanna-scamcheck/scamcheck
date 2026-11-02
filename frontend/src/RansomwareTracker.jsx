@@ -282,6 +282,15 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "AES-256 + RSA-2048 encryption, shadow copy deletion, wallpaper change", mitre: "T1486, T1490" },
     ],
     summary: "One of the most prolific RaaS operations. Known for fast encryption speed, affiliate program, and bug bounty program for their malware. Triple extortion: encryption + data leak + DDoS.",
+    knownCVEs: [
+      { id: "CVE-2023-4966", name: "Citrix Bleed", severity: "Critical" },
+      { id: "CVE-2021-22986", name: "F5 BIG-IP RCE", severity: "Critical" },
+      { id: "CVE-2023-20269", name: "Cisco ASA/AnyConnect VPN", severity: "High" },
+      { id: "CVE-2021-34473", name: "ProxyShell (Exchange)", severity: "Critical" },
+      { id: "CVE-2023-27350", name: "PaperCut NG/MF", severity: "Critical" },
+      { id: "CVE-2022-47966", name: "ManageEngine RCE", severity: "Critical" },
+      { id: "CVE-2024-1709", name: "ConnectWise ScreenConnect", severity: "Critical" },
+    ],
   },
   alphv: {
     aka: ["BlackCat", "ALPHV", "Noberus"],
@@ -296,6 +305,12 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "ChaCha20/AES encryption, ESXi VM targeting, searchable leak site", mitre: "T1486" },
     ],
     summary: "Written in Rust for cross-platform capability. First ransomware with searchable leak site. Known for targeting VMware ESXi environments and large enterprises.",
+    knownCVEs: [
+      { id: "CVE-2021-21972", name: "VMware vCenter RCE", severity: "Critical" },
+      { id: "CVE-2021-21974", name: "VMware ESXi OpenSLP", severity: "High" },
+      { id: "CVE-2023-22515", name: "Confluence Auth Bypass", severity: "Critical" },
+      { id: "CVE-2024-1709", name: "ConnectWise ScreenConnect", severity: "Critical" },
+    ],
   },
   clop: {
     aka: ["Cl0p", "TA505", "FIN11"],
@@ -310,6 +325,14 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "Data theft + extortion (often no encryption), mass victim campaigns", mitre: "T1657" },
     ],
     summary: "Pioneers of mass zero-day exploitation campaigns. MOVEit Transfer exploit affected 2,500+ organizations. Shifted from encryption to pure data extortion model.",
+    knownCVEs: [
+      { id: "CVE-2023-0669", name: "GoAnywhere MFT RCE", severity: "Critical" },
+      { id: "CVE-2023-34362", name: "MOVEit Transfer SQLi", severity: "Critical" },
+      { id: "CVE-2023-35036", name: "MOVEit Transfer SQLi", severity: "Critical" },
+      { id: "CVE-2021-27101", name: "Accellion FTA SQLi", severity: "Critical" },
+      { id: "CVE-2021-27104", name: "Accellion FTA OS Cmd", severity: "Critical" },
+      { id: "CVE-2023-27350", name: "PaperCut NG/MF", severity: "Critical" },
+    ],
   },
   play: {
     aka: ["PlayCrypt", "Play Ransomware"],
@@ -324,6 +347,9 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "Intermittent encryption (faster), .play extension, ransom note in each directory", mitre: "T1486" },
     ],
     summary: "Known for intermittent encryption technique for speed. Targets Latin American organizations heavily. Uses LOLBins extensively to evade detection.",
+    knownCVEs: [
+      { id: "CVE-2024-1709", name: "ConnectWise ScreenConnect", severity: "Critical" },
+    ],
   },
   royal: {
     aka: ["Royal Ransomware", "Blacksuit"],
@@ -338,6 +364,9 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "AES + RSA encryption, partial encryption for speed, .royal extension", mitre: "T1486" },
     ],
     summary: "Comprised of former Conti members. Known for callback phishing and targeting healthcare and education sectors. Rebranded as Blacksuit in 2023.",
+    knownCVEs: [
+      { id: "CVE-2023-46604", name: "Apache ActiveMQ RCE", severity: "Critical" },
+    ],
   },
   "8base": {
     aka: ["8Base"],
@@ -366,6 +395,9 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "AES-256 encryption, .medusa extension, Tor-based negotiation", mitre: "T1486" },
     ],
     summary: "Rising RaaS group known for targeting education and healthcare. Operates Tor-based leak site with countdown timers. Growing affiliate network.",
+    knownCVEs: [
+      { id: "CVE-2023-48788", name: "FortiClientEMS SQLi", severity: "Critical" },
+    ],
   },
   bianlian: {
     aka: ["BianLian"],
@@ -380,6 +412,11 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "Shifted to pure data extortion (no encryption) in 2023", mitre: "T1657" },
     ],
     summary: "Shifted from encryption to pure data extortion in 2023. Written in Go for cross-platform capability. Known for using Ngrok tunnels for persistence.",
+    knownCVEs: [
+      { id: "CVE-2021-31207", name: "ProxyShell (Exchange)", severity: "High" },
+      { id: "CVE-2021-34473", name: "ProxyShell (Exchange)", severity: "Critical" },
+      { id: "CVE-2021-34523", name: "ProxyShell (Exchange)", severity: "Critical" },
+    ],
   },
   akira: {
     aka: ["Akira Ransomware"],
@@ -394,6 +431,10 @@ const GROUP_INTEL = {
       { stage: "Impact", icon: "💀", technique: "ChaCha20/RSA encryption, Linux ESXi variant, .akira extension", mitre: "T1486" },
     ],
     summary: "Rapidly growing group with retro-themed leak site. Focuses on exploiting Cisco VPN appliances. Has both Windows and Linux/ESXi variants.",
+    knownCVEs: [
+      { id: "CVE-2023-20269", name: "Cisco ASA/AnyConnect VPN", severity: "High" },
+      { id: "CVE-2020-3259", name: "Cisco ASA Info Disclosure", severity: "High" },
+    ],
   },
   rhysida: {
     aka: ["Rhysida Ransomware"],
@@ -587,6 +628,45 @@ function GroupProfile({ groupName, groupVictims, groupLoading, dashboard, onCoun
         </div>
         <KillChainDiagram chain={chain} />
       </div>
+
+      {/* Known Exploited Vulnerabilities (CISA KEV cross-link) */}
+      {intel?.knownCVEs && intel.knownCVEs.length > 0 && (
+        <div className="card" style={{ marginBottom: 16, borderColor: "rgba(255,140,0,0.2)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div className="card-title" style={{ marginBottom: 0 }}>
+              Known Exploited Vulnerabilities (CISA KEV)
+            </div>
+            <span style={{ fontSize: 10, color: "var(--text-muted)", background: "rgba(255,140,0,0.1)", padding: "3px 8px", borderRadius: 4, fontWeight: 600 }}>
+              {intel.knownCVEs.length} CVE{intel.knownCVEs.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12, lineHeight: 1.6 }}>
+            These vulnerabilities are confirmed by CISA as actively exploited by this group. Organizations should prioritize patching these CVEs.
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 8 }}>
+            {intel.knownCVEs.map(cve => (
+              <div key={cve.id} style={{
+                padding: 12, borderRadius: 8,
+                background: "var(--bg-tertiary)", border: "1px solid var(--border)",
+                display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10,
+              }}>
+                <div>
+                  <span className="mono" style={{ fontSize: 12, fontWeight: 700, color: "#ff8c00" }}>{cve.id}</span>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{cve.name}</div>
+                </div>
+                <span style={{
+                  padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700, flexShrink: 0,
+                  background: cve.severity === "Critical" ? "rgba(255,61,61,0.12)" : "rgba(255,140,0,0.12)",
+                  color: cve.severity === "Critical" ? "#ff3d3d" : "#ff8c00",
+                  border: `1px solid ${cve.severity === "Critical" ? "rgba(255,61,61,0.25)" : "rgba(255,140,0,0.25)"}`,
+                }}>
+                  {cve.severity}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Victim Analysis */}
       {stats && (
@@ -843,6 +923,14 @@ export function RansomwareTracker() {
   const [groupSearch, setGroupSearch] = useState("");
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [feedLimit, setFeedLimit] = useState(50);
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [kevStats, setKevStats] = useState(null);
+  const [kevLoading, setKevLoading] = useState(false);
+  const [kevEntries, setKevEntries] = useState(null);
+  const [kevFilter, setKevFilter] = useState("ransomware");
+  const [kevSearch, setKevSearch] = useState("");
+  const [kevLimit, setKevLimit] = useState(50);
+  const [expandedKev, setExpandedKev] = useState(null);
 
   /* ── load dashboard ── */
   useEffect(() => {
@@ -1004,13 +1092,26 @@ export function RansomwareTracker() {
       <div style={{ display: "flex", gap: 4, marginBottom: 20, flexWrap: "wrap" }}>
         {[
           ["feed", "🔴 Live Feed"],
+          ["exploits", "🔥 Active Exploits"],
           ["countries", "🌍 Countries"],
           ["groups", "👥 Groups"],
           ["risk", "🛡️ Risk Check"],
           ["analytics", "📊 Analytics"],
           ["search", "🔍 Search"],
         ].map(([key, label]) => (
-          <button key={key} onClick={() => { setTab(key); setSelectedGroup(null); setSelectedCountry(null); }}
+          <button key={key} onClick={() => {
+              setTab(key); setSelectedGroup(null); setSelectedCountry(null);
+              if (key === "exploits" && !kevStats) {
+                setKevLoading(true);
+                Promise.all([
+                  fetch(`${API_BASE}/ransomware/kev/stats`).then(r => r.json()),
+                  fetch(`${API_BASE}/ransomware/kev?ransomware_only=true`).then(r => r.json()),
+                ]).then(([stats, entries]) => {
+                  setKevStats(stats);
+                  setKevEntries(entries);
+                }).catch(() => {}).finally(() => setKevLoading(false));
+              }
+            }}
             style={{
               padding: "8px 16px", borderRadius: 8, border: "1px solid var(--border)",
               background: tab === key ? "var(--accent)" : "var(--bg-secondary)",
@@ -1042,71 +1143,216 @@ export function RansomwareTracker() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {filteredVictims.slice(0, feedLimit).map((v, i) => {
+              const hasDataSize = v.data_size && v.data_size !== "";
+              const hasPostUrl = v.post_url && v.post_url !== "";
+              const hasAttackDate = v.attack_date && v.attack_date !== "";
+              const hasDescription = v.description && v.description !== "";
+              const hasInfostealer = v.infostealer && v.infostealer !== "";
+              const hasEnrichedData = hasDataSize || hasPostUrl || hasAttackDate || hasDescription || hasInfostealer;
+              const isExpanded = expandedCard === i;
+
+              /* Build richer tweet text */
+              const dataSizePart = hasDataSize ? ` (~${v.data_size} exfiltrated)` : "";
+              const sectorPart = v.activity && v.activity !== "Not Found" ? ` [${v.activity}]` : "";
               const tweetTemplates = [
-                `${v.group_name} just added ${v.victim}${v.country_name ? ` from ${v.country_name}` : ""} to their leak site.${v.activity && v.activity !== "Not Found" ? ` They're in the ${v.activity} sector.` : ""}\n\nThis is why no organization is too big or too small to be a target.\n\n#Ransomware #CyberSecurity`,
-                `Another day, another ransomware hit.\n\n${v.victim}${v.country_name ? ` (${v.country_name})` : ""} appears on ${v.group_name}'s victim list.${v.activity && v.activity !== "Not Found" ? ` Sector: ${v.activity}.` : ""}\n\nStay vigilant, patch your systems, back up your data.\n\n#InfoSec #ThreatIntel`,
-                `${v.group_name} has claimed ${v.victim}${v.country_name ? ` in ${v.country_name}` : ""} as their latest victim.${v.activity && v.activity !== "Not Found" ? `\n\nThe ${v.activity} sector continues to be under fire.` : ""}\n\nOrganizations — take ransomware seriously before it's too late.\n\n#CyberSecurity #Ransomware`,
-                `Breaking: ${v.victim}${v.country_name ? ` (${v.country_name})` : ""} hit by ${v.group_name} ransomware group.${v.activity && v.activity !== "Not Found" ? `\n\n${v.activity} sector targeted once again.` : ""}\n\nA reminder to review your incident response plans today, not tomorrow.\n\n#Ransomware #InfoSec`,
+                `${v.group_name} claimed ${v.victim}${v.country_name ? ` (${v.country_name})` : ""}${sectorPart}${dataSizePart}\n\nNo organization is too big or too small to be a target.\n\nTrack live: https://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`,
+                `${v.victim}${v.country_name ? ` in ${v.country_name}` : ""} added to ${v.group_name}'s leak site.${dataSizePart}${sectorPart}\n\nPatch your systems. Back up your data. Today.\n\nLive tracking: https://cyberintelengine.com\n\n#InfoSec #Ransomware`,
+                `${v.group_name} hits ${v.victim}${v.country_name ? ` (${v.country_name})` : ""}${dataSizePart}\n\n${v.activity && v.activity !== "Not Found" ? `The ${v.activity} sector remains under fire. ` : ""}Review your incident response plans today, not tomorrow.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #ThreatIntel`,
+                `New ransomware claim:\n\nGroup: ${v.group_name}\nTarget: ${v.victim}${v.country_name ? `\nCountry: ${v.country_name}` : ""}${hasDataSize ? `\nData: ${v.data_size}` : ""}${sectorPart ? `\nSector: ${v.activity}` : ""}\n\nTrack all claims live at https://cyberintelengine.com\n\n#Ransomware #InfoSec`,
               ];
               const tweetText = tweetTemplates[i % tweetTemplates.length];
               const isCopied = copiedIndex === i;
+
               return (
-                <div key={i} className="card" style={{ padding: 16, transition: "border-color 0.2s" }}
-                  onMouseOver={e => e.currentTarget.style.borderColor = "var(--accent)"}
-                  onMouseOut={e => e.currentTarget.style.borderColor = "var(--border)"}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-                    {/* Main content */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                        <span onClick={() => { setTab("groups"); loadGroupVictims(v.group_name); }}
-                          style={{ padding: "3px 10px", borderRadius: 5, fontSize: 12, fontWeight: 700, background: "rgba(255,61,61,0.15)", color: "var(--accent)", cursor: "pointer", border: "1px solid rgba(255,61,61,0.3)" }}>
-                          {v.group_name}
-                        </span>
-                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>claimed</span>
-                        <span className="mono" style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>{timeAgo(v.discovered)}</span>
+                <div key={i} className="card" style={{
+                  padding: 0, transition: "border-color 0.2s",
+                  borderColor: isExpanded ? "var(--accent)" : undefined,
+                }}
+                  onMouseOver={e => { if (!isExpanded) e.currentTarget.style.borderColor = "rgba(255,61,61,0.4)"; }}
+                  onMouseOut={e => { if (!isExpanded) e.currentTarget.style.borderColor = "var(--border)"; }}>
+
+                  {/* Main card header — always visible */}
+                  <div style={{ padding: 16, cursor: "pointer" }}
+                    onClick={() => setExpandedCard(isExpanded ? null : i)}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+                          <span onClick={(e) => { e.stopPropagation(); setTab("groups"); loadGroupVictims(v.group_name); }}
+                            style={{ padding: "3px 10px", borderRadius: 5, fontSize: 12, fontWeight: 700, background: "rgba(255,61,61,0.15)", color: "var(--accent)", cursor: "pointer", border: "1px solid rgba(255,61,61,0.3)" }}>
+                            {v.group_name}
+                          </span>
+                          <span style={{ fontSize: 11, color: "var(--text-muted)" }}>claimed</span>
+                          {hasPostUrl && (
+                            <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: "rgba(81,207,102,0.12)", color: "#51cf66", border: "1px solid rgba(81,207,102,0.25)" }}>
+                              Verified
+                            </span>
+                          )}
+                          {hasDataSize && (
+                            <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: "rgba(255,140,0,0.12)", color: "#ff8c00", border: "1px solid rgba(255,140,0,0.25)" }}>
+                              {v.data_size}
+                            </span>
+                          )}
+                          <span className="mono" style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>{timeAgo(v.discovered)}</span>
+                        </div>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
+                          {v.victim}
+                        </div>
+                        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12, alignItems: "center" }}>
+                          {v.country && (
+                            <span onClick={(e) => { e.stopPropagation(); setTab("countries"); loadCountryVictims(v.country); }}
+                              style={{ cursor: "pointer", color: "var(--info)" }}>
+                              {countryFlag(v.country)} {v.country_name || v.country}
+                            </span>
+                          )}
+                          {v.activity && v.activity !== "Not Found" && (
+                            <span style={{ color: "var(--text-secondary)" }}>
+                              {v.activity}
+                            </span>
+                          )}
+                          {v.website && (
+                            <span style={{ color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200, fontSize: 11 }}>
+                              {v.website}
+                            </span>
+                          )}
+                          {/* Expand indicator */}
+                          <span style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>
+                            {isExpanded ? "▲ Less" : "▼ Details"}
+                          </span>
+                        </div>
                       </div>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
-                        {v.victim}
+                    </div>
+                  </div>
+
+                  {/* Expanded detail panel */}
+                  {isExpanded && (
+                    <div style={{
+                      borderTop: "1px solid var(--border)",
+                      background: "var(--bg-tertiary)",
+                      padding: 16,
+                    }}>
+                      {/* Intel grid */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 16 }}>
+                        {/* Discovery date */}
+                        <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Discovered</div>
+                          <div className="mono" style={{ fontSize: 13, color: "var(--text-primary)" }}>
+                            {v.discovered ? new Date(v.discovered.replace(" ", "T")).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Unknown"}
+                          </div>
+                        </div>
+
+                        {/* Attack date if available */}
+                        {hasAttackDate && (
+                          <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                            <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Attack Date</div>
+                            <div className="mono" style={{ fontSize: 13, color: "var(--warning)" }}>
+                              {new Date(v.attack_date.replace(" ", "T")).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Data size */}
+                        <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Data Exfiltrated</div>
+                          <div className="mono" style={{ fontSize: 13, color: hasDataSize ? "#ff8c00" : "var(--text-muted)" }}>
+                            {hasDataSize ? v.data_size : "Not disclosed"}
+                          </div>
+                        </div>
+
+                        {/* Claim verification */}
+                        <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Claim Status</div>
+                          <div style={{ fontSize: 13, color: hasPostUrl ? "#51cf66" : "var(--text-muted)", fontWeight: 600 }}>
+                            {hasPostUrl ? "Dark web post detected" : "Unverified claim"}
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12 }}>
+
+                      {/* Description if available */}
+                      {hasDescription && (
+                        <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)", marginBottom: 12 }}>
+                          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Threat Description</div>
+                          <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                            {v.description}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Infostealer tag */}
+                      {hasInfostealer && (
+                        <div style={{ padding: 10, background: "rgba(255,61,61,0.06)", borderRadius: 8, border: "1px solid rgba(255,61,61,0.2)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 14 }}>🦠</span>
+                          <span style={{ fontSize: 12, color: "var(--accent)", fontWeight: 600 }}>Infostealer Linked:</span>
+                          <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{v.infostealer}</span>
+                        </div>
+                      )}
+
+                      {/* Group intel quick look */}
+                      {(() => {
+                        const intel = getGroupIntel(v.group_name);
+                        if (!intel) return null;
+                        return (
+                          <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)", marginBottom: 12 }}>
+                            <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Group Intelligence</div>
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+                              {intel.type && <span style={{ padding: "3px 8px", borderRadius: 4, fontSize: 10, background: "rgba(255,140,0,0.12)", color: "#ff8c00" }}>{intel.type}</span>}
+                              {intel.firstSeen && <span style={{ padding: "3px 8px", borderRadius: 4, fontSize: 10, background: "var(--bg-tertiary)", color: "var(--text-muted)" }}>Active since {intel.firstSeen}</span>}
+                              {intel.aka && <span style={{ padding: "3px 8px", borderRadius: 4, fontSize: 10, background: "var(--bg-tertiary)", color: "var(--text-muted)" }}>AKA: {intel.aka.join(", ")}</span>}
+                            </div>
+                            <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6 }}>{intel.summary}</div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Action buttons */}
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        {/* Copy Tweet */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(tweetText).then(() => {
+                              setCopiedIndex(i);
+                              setTimeout(() => setCopiedIndex(null), 2000);
+                            });
+                          }}
+                          style={{
+                            padding: "8px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                            border: `1px solid ${isCopied ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
+                            background: isCopied ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)",
+                            color: isCopied ? "#51cf66" : "var(--text-secondary)",
+                            cursor: "pointer", transition: "all 0.2s",
+                          }}
+                        >
+                          {isCopied ? "✓ Copied!" : "📋 Copy Tweet"}
+                        </button>
+
+                        {/* View Group Profile */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setTab("groups"); loadGroupVictims(v.group_name); }}
+                          style={{
+                            padding: "8px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                            border: "1px solid var(--border)", background: "var(--bg-secondary)",
+                            color: "var(--accent)", cursor: "pointer", transition: "all 0.2s",
+                          }}
+                        >
+                          👥 View {v.group_name} Profile
+                        </button>
+
+                        {/* View Country */}
                         {v.country && (
-                          <span onClick={() => { setTab("countries"); loadCountryVictims(v.country); }}
-                            style={{ cursor: "pointer", color: "var(--info)" }}>
-                            {countryFlag(v.country)} {v.country_name || v.country}
-                          </span>
-                        )}
-                        {v.activity && v.activity !== "Not Found" && (
-                          <span style={{ color: "var(--text-secondary)" }}>
-                            📁 {v.activity}
-                          </span>
-                        )}
-                        {v.website && (
-                          <span style={{ color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200, fontSize: 11 }}>
-                            🔗 {v.website}
-                          </span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setTab("countries"); loadCountryVictims(v.country); }}
+                            style={{
+                              padding: "8px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                              border: "1px solid var(--border)", background: "var(--bg-secondary)",
+                              color: "var(--info)", cursor: "pointer", transition: "all 0.2s",
+                            }}
+                          >
+                            {countryFlag(v.country)} View {v.country_name} Attacks
+                          </button>
                         )}
                       </div>
                     </div>
-                    {/* Copy Tweet button */}
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(tweetText).then(() => {
-                          setCopiedIndex(i);
-                          setTimeout(() => setCopiedIndex(null), 2000);
-                        });
-                      }}
-                      style={{
-                        padding: "6px 12px", borderRadius: 6, fontSize: 11, fontWeight: 600,
-                        border: `1px solid ${isCopied ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
-                        background: isCopied ? "rgba(81,207,102,0.1)" : "var(--bg-tertiary)",
-                        color: isCopied ? "#51cf66" : "var(--text-secondary)",
-                        cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {isCopied ? "✓ Copied!" : "📋 Copy Tweet"}
-                    </button>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -1122,6 +1368,279 @@ export function RansomwareTracker() {
           {filteredVictims.length > 0 && filteredVictims.length <= feedLimit && (
             <div style={{ textAlign: "center", padding: 16, fontSize: 12, color: "var(--text-muted)" }}>
               Showing all {filteredVictims.length} victims
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══ TAB: Active Exploits (CISA KEV) ═══════════════════════ */}
+      {tab === "exploits" && (
+        <div>
+          {kevLoading ? (
+            <div style={{ textAlign: "center", padding: 60 }}>
+              <div className="pulse" style={{ fontSize: 36, marginBottom: 12 }}>🔥</div>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>Loading CISA KEV Catalog...</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>Fetching known exploited vulnerabilities</div>
+            </div>
+          ) : kevStats ? (
+            <div>
+              {/* KEV hero banner */}
+              <div className="card" style={{ marginBottom: 20, borderColor: "rgba(255,140,0,0.3)", background: "linear-gradient(135deg, var(--bg-secondary) 0%, rgba(255,140,0,0.06) 100%)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <span style={{ fontSize: 28 }}>🛡️</span>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 700 }}>CISA Known Exploited Vulnerabilities</div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                      Vulnerabilities actively exploited in the wild, maintained by the U.S. Cybersecurity & Infrastructure Security Agency
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stat cards */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+                  <div style={{ padding: 14, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                    <div className="mono" style={{ fontSize: 22, fontWeight: 700, color: "var(--accent)" }}>{kevStats.total_kevs}</div>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.6 }}>Total KEVs</div>
+                  </div>
+                  <div style={{ padding: 14, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                    <div className="mono" style={{ fontSize: 22, fontWeight: 700, color: "#ff8c00" }}>{kevStats.ransomware_linked}</div>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.6 }}>Ransomware Linked</div>
+                  </div>
+                  <div style={{ padding: 14, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                    <div className="mono" style={{ fontSize: 22, fontWeight: 700, color: "var(--warning)" }}>{kevStats.ransomware_percentage}%</div>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.6 }}>Ransomware %</div>
+                  </div>
+                  <div style={{ padding: 14, background: "var(--bg-tertiary)", borderRadius: 8, textAlign: "center" }}>
+                    <div className="mono" style={{ fontSize: 22, fontWeight: 700, color: "var(--info)" }}>{kevStats.recent_30d}</div>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.6 }}>Added (30d)</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top vendors bar chart */}
+              {kevStats.top_vendors && kevStats.top_vendors.length > 0 && (
+                <div className="card" style={{ marginBottom: 20 }}>
+                  <div className="card-title">Most Exploited Vendors</div>
+                  <MiniBar data={kevStats.top_vendors.map(v => ({ label: v.vendor, count: v.count, color: "#ff8c00" }))} />
+                </div>
+              )}
+
+              {/* Filter controls */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
+                <div style={{ display: "flex", gap: 4 }}>
+                  {[
+                    ["ransomware", "🔴 Ransomware"],
+                    ["recent", "🕐 Recent (30d)"],
+                    ["all", "📋 All KEVs"],
+                  ].map(([key, label]) => (
+                    <button key={key} onClick={() => {
+                      setKevFilter(key);
+                      setKevLimit(50);
+                      setExpandedKev(null);
+                      if (key === "all" && kevEntries && kevEntries.length < 500) {
+                        fetch(`${API_BASE}/ransomware/kev`).then(r => r.json()).then(data => {
+                          if (Array.isArray(data)) setKevEntries(data);
+                        });
+                      }
+                    }}
+                      style={{
+                        padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                        border: "1px solid var(--border)", cursor: "pointer",
+                        background: kevFilter === key ? "var(--accent)" : "var(--bg-secondary)",
+                        color: kevFilter === key ? "white" : "var(--text-secondary)",
+                      }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <input type="text" placeholder="Search CVE, vendor, product..."
+                  value={kevSearch} onChange={e => setKevSearch(e.target.value)}
+                  style={{ flex: 1, minWidth: 180, padding: "8px 12px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 12 }}
+                />
+              </div>
+
+              {/* KEV entries list */}
+              {(() => {
+                let displayEntries = kevFilter === "recent"
+                  ? (kevStats.recent_entries || [])
+                  : (kevEntries || []);
+
+                if (kevFilter === "ransomware") {
+                  displayEntries = displayEntries.filter(e => e.ransomware_use);
+                }
+
+                if (kevSearch) {
+                  const q = kevSearch.toLowerCase();
+                  displayEntries = displayEntries.filter(e =>
+                    (e.cve_id || "").toLowerCase().includes(q) ||
+                    (e.vendor || "").toLowerCase().includes(q) ||
+                    (e.product || "").toLowerCase().includes(q) ||
+                    (e.name || "").toLowerCase().includes(q) ||
+                    (e.description || "").toLowerCase().includes(q)
+                  );
+                }
+
+                return (
+                  <div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 10 }}>
+                      Showing {Math.min(displayEntries.length, kevLimit)} of {displayEntries.length} vulnerabilities
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {displayEntries.slice(0, kevLimit).map((entry, i) => {
+                        const isExp = expandedKev === i;
+                        const isOverdue = entry.due_date && new Date(entry.due_date) < new Date();
+                        const groupNames = entry.linked_groups || [];
+
+                        return (
+                          <div key={i} className="card" style={{
+                            padding: 0, transition: "border-color 0.2s",
+                            borderColor: isExp ? "#ff8c00" : undefined,
+                          }}
+                            onMouseOver={e => { if (!isExp) e.currentTarget.style.borderColor = "rgba(255,140,0,0.4)"; }}
+                            onMouseOut={e => { if (!isExp) e.currentTarget.style.borderColor = "var(--border)"; }}>
+
+                            {/* Card header */}
+                            <div style={{ padding: 14, cursor: "pointer" }} onClick={() => setExpandedKev(isExp ? null : i)}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+                                    <span className="mono" style={{ padding: "3px 10px", borderRadius: 5, fontSize: 12, fontWeight: 700, background: "rgba(255,140,0,0.15)", color: "#ff8c00", border: "1px solid rgba(255,140,0,0.3)" }}>
+                                      {entry.cve_id}
+                                    </span>
+                                    {entry.ransomware_use && (
+                                      <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: "rgba(255,61,61,0.12)", color: "#ff3d3d", border: "1px solid rgba(255,61,61,0.25)" }}>
+                                        Ransomware
+                                      </span>
+                                    )}
+                                    {groupNames.length > 0 && groupNames.map(g => (
+                                      <span key={g} onClick={(e) => { e.stopPropagation(); setTab("groups"); loadGroupVictims(g); }}
+                                        style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: "rgba(255,61,61,0.08)", color: "var(--accent)", border: "1px solid rgba(255,61,61,0.2)", cursor: "pointer" }}>
+                                        {g}
+                                      </span>
+                                    ))}
+                                    {isOverdue && (
+                                      <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: "rgba(255,61,61,0.12)", color: "#ff3d3d" }}>
+                                        OVERDUE
+                                      </span>
+                                    )}
+                                    <span className="mono" style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>
+                                      Added {entry.date_added}
+                                    </span>
+                                  </div>
+                                  <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", marginBottom: 4 }}>
+                                    {entry.name}
+                                  </div>
+                                  <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--text-secondary)", flexWrap: "wrap" }}>
+                                    <span>{entry.vendor}</span>
+                                    <span style={{ color: "var(--text-muted)" }}>{entry.product}</span>
+                                    <span style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: "auto" }}>{isExp ? "▲ Less" : "▼ Details"}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Expanded details */}
+                            {isExp && (
+                              <div style={{ borderTop: "1px solid var(--border)", background: "var(--bg-tertiary)", padding: 16 }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 14 }}>
+                                  <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Vendor / Product</div>
+                                    <div style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{entry.vendor} — {entry.product}</div>
+                                  </div>
+                                  <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Remediation Deadline</div>
+                                    <div className="mono" style={{ fontSize: 13, color: isOverdue ? "#ff3d3d" : "var(--text-primary)", fontWeight: 600 }}>
+                                      {entry.due_date || "Not specified"} {isOverdue ? " (OVERDUE)" : ""}
+                                    </div>
+                                  </div>
+                                  <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                                    <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Ransomware Campaign Use</div>
+                                    <div style={{ fontSize: 13, fontWeight: 600, color: entry.ransomware_use ? "#ff3d3d" : "#51cf66" }}>
+                                      {entry.ransomware_use ? "Known — actively used by ransomware groups" : "Unknown"}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Description */}
+                                <div style={{ padding: 12, background: "var(--bg-secondary)", borderRadius: 8, border: "1px solid var(--border)", marginBottom: 12 }}>
+                                  <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Vulnerability Description</div>
+                                  <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>{entry.description}</div>
+                                </div>
+
+                                {/* Required action */}
+                                {entry.required_action && (
+                                  <div style={{ padding: 12, background: "rgba(59,130,246,0.06)", borderRadius: 8, border: "1px solid rgba(59,130,246,0.2)", marginBottom: 12 }}>
+                                    <div style={{ fontSize: 10, color: "var(--info)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6, fontWeight: 700 }}>Required Action</div>
+                                    <div style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7 }}>{entry.required_action}</div>
+                                  </div>
+                                )}
+
+                                {/* Linked groups */}
+                                {groupNames.length > 0 && (
+                                  <div style={{ padding: 12, background: "rgba(255,61,61,0.04)", borderRadius: 8, border: "1px solid rgba(255,61,61,0.15)", marginBottom: 12 }}>
+                                    <div style={{ fontSize: 10, color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8, fontWeight: 700 }}>Known Ransomware Groups Using This Exploit</div>
+                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                      {groupNames.map(g => (
+                                        <button key={g} onClick={() => { setTab("groups"); loadGroupVictims(g); }}
+                                          style={{
+                                            padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 700,
+                                            background: "rgba(255,61,61,0.12)", color: "var(--accent)",
+                                            border: "1px solid rgba(255,61,61,0.3)", cursor: "pointer",
+                                          }}>
+                                          👥 {g}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Copy tweet */}
+                                <button
+                                  onClick={() => {
+                                    const tweet = `${entry.cve_id} (${entry.vendor} ${entry.product}) is on CISA's Known Exploited Vulnerabilities list.${entry.ransomware_use ? "\n\nThis vulnerability is actively used in ransomware campaigns." : ""}\n\n${entry.name}\n\nPatch now. Don't wait.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #CISA #KEV ${entry.ransomware_use ? "#Ransomware" : ""}`;
+                                    navigator.clipboard.writeText(tweet).then(() => {
+                                      setCopiedIndex(`kev-${i}`);
+                                      setTimeout(() => setCopiedIndex(null), 2000);
+                                    });
+                                  }}
+                                  style={{
+                                    padding: "8px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600,
+                                    border: `1px solid ${copiedIndex === `kev-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`,
+                                    background: copiedIndex === `kev-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)",
+                                    color: copiedIndex === `kev-${i}` ? "#51cf66" : "var(--text-secondary)",
+                                    cursor: "pointer", transition: "all 0.2s",
+                                  }}
+                                >
+                                  {copiedIndex === `kev-${i}` ? "✓ Copied!" : "📋 Copy Tweet"}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {displayEntries.length > kevLimit && (
+                      <div style={{ textAlign: "center", marginTop: 16 }}>
+                        <button onClick={() => setKevLimit(prev => prev + 50)}
+                          className="cta-btn" style={{ padding: "10px 24px", fontSize: 13 }}>
+                          Load More ({displayEntries.length - kevLimit} remaining)
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Attribution footer */}
+              <div style={{ textAlign: "center", padding: "16px 0", marginTop: 16, fontSize: 11, color: "var(--text-muted)" }}>
+                Data sourced from CISA Known Exploited Vulnerabilities Catalog · Updated daily
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center", padding: 60, color: "var(--text-muted)" }}>
+              Could not load KEV data. Try refreshing.
             </div>
           )}
         </div>
