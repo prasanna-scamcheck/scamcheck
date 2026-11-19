@@ -9,6 +9,8 @@ import { PrivacyPolicy, TermsOfService, DataSources, Disclaimer } from "./LegalP
 import { AboutPage } from "./AboutPage";
 import { RansomwareTracker } from "./RansomwareTracker";
 import { PhishingTracker } from "./PhishingTracker";
+import { BreachRadar } from "./BreachRadar";
+import { ScamPulse } from "./ScamPulse";
 import "./App.css";
 import "./LegalStyles.css";
 
@@ -172,6 +174,8 @@ export default function App() {
           <button className={`nav-link ${page === "predictor" ? "active" : ""}`} onClick={() => setPage("predictor")}>Scam Predictor</button>
           <button className={`nav-link ${page === "ransomware" ? "active" : ""}`} onClick={() => setPage("ransomware")}>Ransomware Tracker</button>
           <button className={`nav-link ${page === "phishing" ? "active" : ""}`} onClick={() => setPage("phishing")}>Phishing Tracker</button>
+          <button className={`nav-link ${page === "breaches" ? "active" : ""}`} onClick={() => setPage("breaches")}>Breach Radar</button>
+          <button className={`nav-link ${page === "scampulse" ? "active" : ""}`} onClick={() => setPage("scampulse")}>Scam Pulse</button>
           <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report Scam</button>
           <button className={`nav-link ${page === "admin" ? "active" : ""}`} onClick={() => setPage("admin")}>Dashboard</button>
           <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => { setPage("about"); window.scrollTo(0,0); }}>About</button>
@@ -765,6 +769,20 @@ export default function App() {
       {page === "phishing" && (
         <div style={{ padding: "40px 24px" }}>
           <PhishingTracker />
+        </div>
+      )}
+
+      {/* ─── BREACH RADAR ─── */}
+      {page === "breaches" && (
+        <div style={{ padding: "40px 24px" }}>
+          <BreachRadar />
+        </div>
+      )}
+
+      {/* ─── SCAM PULSE ─── */}
+      {page === "scampulse" && (
+        <div style={{ padding: "40px 24px" }}>
+          <ScamPulse />
         </div>
       )}
 

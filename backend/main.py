@@ -4,6 +4,8 @@ Main FastAPI Application
 """
 from ransomware_tracker import register_ransomware_routes
 from phishing_tracker import register_phishing_routes
+from breach_radar import register_breach_routes
+from scam_pulse import register_scam_pulse_routes
 from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -39,6 +41,8 @@ app.add_middleware(
 )
 register_ransomware_routes(app)
 register_phishing_routes(app)
+register_breach_routes(app)
+register_scam_pulse_routes(app)
 
 # Create tables on startup
 @app.on_event("startup")
