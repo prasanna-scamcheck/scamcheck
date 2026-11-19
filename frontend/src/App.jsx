@@ -8,6 +8,7 @@ import {
 import { PrivacyPolicy, TermsOfService, DataSources, Disclaimer } from "./LegalPages";
 import { AboutPage } from "./AboutPage";
 import { RansomwareTracker } from "./RansomwareTracker";
+import { PhishingTracker } from "./PhishingTracker";
 import "./App.css";
 import "./LegalStyles.css";
 
@@ -170,6 +171,7 @@ export default function App() {
           <button className={`nav-link ${page === "home" ? "active" : ""}`} onClick={goHome}>Search</button>
           <button className={`nav-link ${page === "predictor" ? "active" : ""}`} onClick={() => setPage("predictor")}>Scam Predictor</button>
           <button className={`nav-link ${page === "ransomware" ? "active" : ""}`} onClick={() => setPage("ransomware")}>Ransomware Tracker</button>
+          <button className={`nav-link ${page === "phishing" ? "active" : ""}`} onClick={() => setPage("phishing")}>Phishing Tracker</button>
           <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report Scam</button>
           <button className={`nav-link ${page === "admin" ? "active" : ""}`} onClick={() => setPage("admin")}>Dashboard</button>
           <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => { setPage("about"); window.scrollTo(0,0); }}>About</button>
@@ -756,6 +758,13 @@ export default function App() {
       {page === "ransomware" && (
         <div style={{ padding: "40px 24px" }}>
           <RansomwareTracker />
+        </div>
+      )}
+
+      {/* ─── PHISHING TRACKER ─── */}
+      {page === "phishing" && (
+        <div style={{ padding: "40px 24px" }}>
+          <PhishingTracker />
         </div>
       )}
 

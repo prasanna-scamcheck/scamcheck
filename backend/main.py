@@ -3,6 +3,7 @@ CyberIntelEngine — Cybercrime Intelligence Search Engine
 Main FastAPI Application
 """
 from ransomware_tracker import register_ransomware_routes
+from phishing_tracker import register_phishing_routes
 from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -37,6 +38,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 register_ransomware_routes(app)
+register_phishing_routes(app)
 
 # Create tables on startup
 @app.on_event("startup")
