@@ -38,7 +38,34 @@ const getTypeIcon = (type) => ({ phone: "📱", upi: "₹", bank_account: "🏦"
 const getTypeLabel = (type) => ({ phone: "Phone", upi: "UPI ID", bank_account: "Bank Account", email: "Email", domain: "Domain", wallet: "Crypto Wallet" }[type] || type);
 
 export default function App() {
-  const [page, setPage] = useState("home");
+  /* ─── ROUTING via History API ─── */
+  const getPageFromHash = () => {
+    const hash = window.location.hash.replace("#", "");
+    return hash || "home";
+  };
+  const [page, _setPage] = useState(getPageFromHash);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const setPage = (newPage) => {
+    _setPage(newPage);
+    window.location.hash = newPage === "home" ? "" : newPage;
+    setMobileMenuOpen(false);
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const p = getPageFromHash();
+      _setPage(p);
+      setMobileMenuOpen(false);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    window.addEventListener("popstate", onHashChange);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+      window.removeEventListener("popstate", onHashChange);
+    };
+  }, []);
   const [query, setQuery] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -166,21 +193,27 @@ export default function App() {
       {/* NAV */}
       <nav className="nav">
         <div className="nav-brand" onClick={goHome}>
-          <div className="shield">🛡</div>
+          <div className="shield">&#x1F6E1;</div>
           <span>CyberIntelEngine</span>
         </div>
-        <div className="nav-links">
+        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu">
+          <span className={`hamburger ${mobileMenuOpen ? "open" : ""}`} />
+        </button>
+        <div className={`nav-links ${mobileMenuOpen ? "nav-open" : ""}`}>
           <button className={`nav-link ${page === "home" ? "active" : ""}`} onClick={goHome}>Search</button>
           <button className={`nav-link ${page === "predictor" ? "active" : ""}`} onClick={() => setPage("predictor")}>Scam Predictor</button>
-          <button className={`nav-link ${page === "ransomware" ? "active" : ""}`} onClick={() => setPage("ransomware")}>Ransomware Tracker</button>
-          <button className={`nav-link ${page === "phishing" ? "active" : ""}`} onClick={() => setPage("phishing")}>Phishing Tracker</button>
-          <button className={`nav-link ${page === "breaches" ? "active" : ""}`} onClick={() => setPage("breaches")}>Breach Radar</button>
+          <button className={`nav-link ${page === "ransomware" ? "active" : ""}`} onClick={() => setPage("ransomware")}>Ransomware</button>
+          <button className={`nav-link ${page === "phishing" ? "active" : ""}`} onClick={() => setPage("phishing")}>Phishing</button>
+          <button className={`nav-link ${page === "breaches" ? "active" : ""}`} onClick={() => setPage("breaches")}>Breaches</button>
           <button className={`nav-link ${page === "scampulse" ? "active" : ""}`} onClick={() => setPage("scampulse")}>Scam Pulse</button>
-          <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report Scam</button>
+          <button className={`nav-link ${page === "report" ? "active" : ""}`} onClick={() => { setPage("report"); setReportSubmitted(false); }}>Report</button>
           <button className={`nav-link ${page === "admin" ? "active" : ""}`} onClick={() => setPage("admin")}>Dashboard</button>
-          <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => { setPage("about"); window.scrollTo(0,0); }}>About</button>
+          <button className={`nav-link ${page === "about" ? "active" : ""}`} onClick={() => setPage("about")}>About</button>
         </div>
       </nav>
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && <div className="nav-overlay" onClick={() => setMobileMenuOpen(false)} />}
 
       {/* ERROR BANNER */}
       {error && (

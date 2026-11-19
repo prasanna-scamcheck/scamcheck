@@ -6,10 +6,18 @@ Global coverage, cached for 1 hour (breach data changes infrequently)
 
 import httpx
 import asyncio
+import re
 import time
 from datetime import datetime, timedelta
 from collections import Counter
 from typing import Optional
+
+
+def _strip_html(text):
+    """Remove HTML tags from text."""
+    if not text:
+        return ""
+    return re.sub(r"<[^>]+>", "", text).strip()
 
 # ─── Cache layer ────────────────────────────────────────────────────
 _cache = {}
@@ -39,7 +47,7 @@ def _normalize_hibp_breach(b):
         "added_date": b.get("AddedDate", ""),
         "modified_date": b.get("ModifiedDate", ""),
         "pwn_count": b.get("PwnCount", 0),
-        "description": b.get("Description", ""),
+        "description": _strip_html(b.get("Description", "")),
         "data_classes": b.get("DataClasses", []),
         "is_verified": b.get("IsVerified", False),
         "is_sensitive": b.get("IsSensitive", False),
@@ -310,6 +318,8 @@ def register_breach_routes(app):
 
     @app.get("/api/breaches/search/{keyword}")
     async def api_breach_search(keyword: str):
+        if len(keyword) > 200:
+            return {"error": "Search query too long"}
         return await search_breaches(keyword)
 
     @app.get("/api/breaches/detail/{breach_name}")

@@ -154,13 +154,82 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .fade-up-d2 { animation: fadeUp 0.4s ease 0.2s forwards; opacity: 0; }
 .fade-up-d3 { animation: fadeUp 0.4s ease 0.3s forwards; opacity: 0; }
 
+/* MOBILE MENU BUTTON */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 110;
+}
+.hamburger {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  position: relative;
+  transition: all 0.3s;
+}
+.hamburger::before, .hamburger::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  transition: all 0.3s;
+}
+.hamburger::before { top: -7px; }
+.hamburger::after { top: 7px; }
+.hamburger.open { background: transparent; }
+.hamburger.open::before { top: 0; transform: rotate(45deg); }
+.hamburger.open::after { top: 0; transform: rotate(-45deg); }
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 90;
+}
+
 /* RESPONSIVE */
+@media (max-width: 900px) {
+  .mobile-menu-btn { display: block; }
+  .nav-overlay { display: block; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 56px;
+    right: 0;
+    width: 240px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    padding: 8px;
+    gap: 2px;
+    z-index: 100;
+    box-shadow: -4px 4px 20px rgba(0,0,0,0.3);
+  }
+  .nav-links.nav-open { display: flex; }
+  .nav-link { text-align: left; padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+  .hero h1 { font-size: 24px; letter-spacing: -0.5px; }
+  .hero p { font-size: 14px; }
+  .hero { padding: 40px 16px 30px; }
+  .search-box { font-size: 14px; padding: 14px 50px 14px 16px; }
+}
+
 @media (max-width: 640px) {
   .form-row, .two-col { grid-template-columns: 1fr; }
   .result-header { flex-direction: column; }
   .risk-badge { margin-left: 0; }
   .admin-stats { grid-template-columns: 1fr 1fr; }
-  .nav-link { padding: 8px 10px; font-size: 12px; }
+  .result-page, .report-page { padding: 20px 16px; }
+  .card { padding: 16px; }
+  .intel-grid { grid-template-columns: 1fr 1fr; }
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }

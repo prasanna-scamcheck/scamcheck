@@ -6,13 +6,29 @@ from ransomware_tracker import register_ransomware_routes
 from phishing_tracker import register_phishing_routes
 from breach_radar import register_breach_routes
 from scam_pulse import register_scam_pulse_routes
-from fastapi import FastAPI, Depends, HTTPException, Query, Request
+from fastapi import FastAPI, Depends, HTTPException, Query, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func, or_, desc
 from datetime import datetime
 from typing import Optional
 import os
+
+
+# ── Auth dependency ──
+def verify_admin_token(authorization: Optional[str] = Header(None)):
+    """Verify JWT token for admin endpoints."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    token = authorization.split(" ", 1)[1]
+    try:
+        from jose import jwt
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=["HS256"])
+        if payload.get("sub") != config.ADMIN_USERNAME:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 import config
 from models import get_db, create_tables, Indicator, Report, AdminUser, indicator_links
@@ -173,7 +189,7 @@ def submit_report(report: ReportCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/reports/pending")
-def get_pending_reports(db: Session = Depends(get_db)):
+def get_pending_reports(db: Session = Depends(get_db), _auth=Depends(verify_admin_token)):
     """Get all pending reports for moderation."""
     reports = db.query(Report).filter(
         Report.status == "pending"
@@ -182,7 +198,7 @@ def get_pending_reports(db: Session = Depends(get_db)):
 
 
 @app.post("/api/reports/{report_id}/approve")
-def approve_report(report_id: int, db: Session = Depends(get_db)):
+def approve_report(report_id: int, db: Session = Depends(get_db), _auth=Depends(verify_admin_token)):
     """
     Approve a report: updates or creates the indicator, recalculates risk score.
     """
@@ -243,7 +259,7 @@ def approve_report(report_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/api/reports/{report_id}/reject")
-def reject_report(report_id: int, db: Session = Depends(get_db)):
+def reject_report(report_id: int, db: Session = Depends(get_db), _auth=Depends(verify_admin_token)):
     """Reject a report — removes it from the queue."""
     report = db.query(Report).filter(Report.id == report_id).first()
     if not report:

@@ -421,6 +421,8 @@ def register_phishing_routes(app):
 
     @app.get("/api/phishing/search/{keyword}")
     async def api_phishing_search(keyword: str):
+        if len(keyword) > 200:
+            return {"error": "Search query too long"}
         return await search_phishing(keyword)
 
     @app.get("/api/phishing/brand/{brand}")
