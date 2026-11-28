@@ -45,13 +45,70 @@ function buildScamTweet(cat) {
   const name = cat.name || "";
   const losses = cat.losses_formatted || "";
   const trend = cat.global_trend || "";
+  const methods = cat.common_methods || [];
+  const platforms = cat.common_platforms || [];
+  const redFlags = cat.red_flags || [];
+  const riskLevel = cat.risk_level || "";
 
-  const templates = [
-    `${name} accounts for an estimated ${losses} in annual losses globally and the trend is ${trend}. ${cat.common_methods ? cat.common_methods[0] + " remains the most common vector." : ""} A reminder to verify before you trust or pay. https://cyberintelengine.com`,
-    `Global ${name.toLowerCase()} activity is currently ${trend}, with estimated annual losses of ${losses}. Know the red flags before you become a statistic. https://cyberintelengine.com`,
-    `${losses} lost to ${name.toLowerCase()} globally each year. The trend is ${trend}. CyberIntelEngine tracks the methods, platforms, and red flags so you can recognize these scams before they reach your wallet. https://cyberintelengine.com`,
-    `${name} is one of the most damaging categories of cyber fraud worldwide, with losses estimated at ${losses} per year. The activity trend is currently ${trend}. Stay informed. https://cyberintelengine.com`,
-  ];
+  const templates = [];
+
+  // Lead with dollar figure
+  templates.push(
+    `${losses} a year. That is what ${name.toLowerCase()} costs victims globally.${methods.length ? ` The most common method right now: ${methods[0].toLowerCase()}.` : ""}${trend === "rising" ? " And the numbers are still going up." : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+  );
+
+  // Lead with the method
+  if (methods.length) {
+    templates.push(
+      `${methods[0]} is the leading vector for ${name.toLowerCase()} right now.${platforms.length ? ` Most of the activity runs through ${platforms.slice(0, 2).join(" and ")}.` : ""} Estimated annual losses: ${losses}. The trend is ${trend}.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
+  // Lead with trend direction
+  if (trend === "rising") {
+    templates.push(
+      `${name} activity is rising. Estimated global losses now stand at ${losses} per year.${methods.length >= 2 ? ` Common vectors include ${methods[0].toLowerCase()} and ${methods[1].toLowerCase()}.` : ""}${platforms.length ? ` Primary platforms: ${platforms.slice(0, 2).join(", ")}.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  } else if (trend === "declining") {
+    templates.push(
+      `${name} reports are declining, but the category still accounts for an estimated ${losses} in annual losses.${methods.length ? ` ${methods[0]} remains the primary method.` : ""} Lower volume does not mean lower risk per incident.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  } else {
+    templates.push(
+      `${name} losses hold steady at an estimated ${losses} per year.${methods.length ? ` ${methods[0]} continues to be the primary approach.` : ""} The volume is not growing, but it is not shrinking either.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
+  // Platform-specific
+  if (platforms.length) {
+    templates.push(
+      `If you receive an unsolicited message on ${platforms[0]}, there is a decent chance it is the beginning of a ${name.toLowerCase()} attempt.${losses ? ` This category costs victims an estimated ${losses} annually.` : ""}${trend === "rising" ? " Activity is trending upward." : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
+  // Red flag angle
+  if (redFlags.length) {
+    templates.push(
+      `The number one red flag for ${name.toLowerCase()}: ${redFlags[0].toLowerCase()}.${losses ? ` This category of fraud accounts for approximately ${losses} in losses each year.` : ""}${methods.length ? ` Most common vector: ${methods[0].toLowerCase()}.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
+  // Risk level framing
+  if (riskLevel === "critical") {
+    templates.push(
+      `${name} is rated critical risk and currently accounts for an estimated ${losses} in annual global losses.${trend === "rising" ? " The trend line is still climbing." : ""} ${methods.length ? `${methods[0]} is the most common entry point.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
+  // Short, conversational
+  templates.push(
+    `${losses} lost to ${name.toLowerCase()} every year. The trend: ${trend}.${platforms.length ? ` Where it happens: ${platforms.slice(0, 3).join(", ")}.` : ""}${methods.length ? ` How it starts: ${methods[0].toLowerCase()}.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+  );
+
+  // Longer narrative
+  templates.push(
+    `Most people think they would never fall for a ${name.toLowerCase()} attempt. The numbers suggest otherwise. ${losses} in estimated annual losses globally.${methods.length >= 2 ? ` Attackers favor ${methods[0].toLowerCase()} and ${methods[1].toLowerCase()}.` : ""}${platforms.length ? ` Primary channels: ${platforms.slice(0, 2).join(" and ")}.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+  );
 
   return templates[Math.floor(Math.random() * templates.length)];
 }
@@ -63,21 +120,48 @@ function buildStatsTweet(stats) {
   const topScam = stats.top_scams_by_losses?.[0];
 
   const templates = [
-    `CyberIntelEngine tracks ${totalCats} categories of global cyber fraud, with combined estimated annual losses of ${total}. ${rising} of those categories are trending upward.${topScam ? ` ${topScam.name} leads at ${topScam.losses_formatted} per year.` : ""} https://cyberintelengine.com`,
-    `${total} in estimated global annual losses to cyber fraud, across ${totalCats} tracked categories. ${rising} categories are currently rising.${topScam ? ` The costliest: ${topScam.name} at ${topScam.losses_formatted}.` : ""} https://cyberintelengine.com`,
-    `Global scam intelligence snapshot: ${totalCats} fraud categories tracked, ${rising} trending upward, combined annual losses estimated at ${total}.${topScam ? ` ${topScam.name} accounts for ${topScam.losses_formatted} of that figure.` : ""} https://cyberintelengine.com`,
+    `${total} in estimated annual losses to cyber fraud, across ${totalCats} tracked categories. ${rising} of them are trending upward right now.${topScam ? ` The single costliest category: ${topScam.name}, at ${topScam.losses_formatted} a year.` : ""}\n\nhttps://cyberintelengine.com\n\n#CyberFraud #CyberSecurity`,
+    `${rising} out of ${totalCats} scam categories are currently on the rise. Combined estimated annual losses: ${total}.${topScam ? ` ${topScam.name} alone accounts for ${topScam.losses_formatted} of that figure.` : ""} The scale of the problem is not shrinking.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`,
+    `The global cost of cyber fraud right now: an estimated ${total} per year across ${totalCats} categories that CyberIntelEngine tracks.${topScam ? ` ${topScam.name} leads the list at ${topScam.losses_formatted}.` : ""} ${rising} categories are still growing.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #CyberSecurity`,
+    `${totalCats} categories of cyber fraud. ${total} in annual losses. ${rising} of those categories trending upward.${topScam ? ` The worst offender: ${topScam.name} at ${topScam.losses_formatted} per year.` : ""} These are not small numbers.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`,
   ];
 
   return templates[Math.floor(Math.random() * templates.length)];
 }
 
 function buildComparisonTweet(item) {
-  const dir = item.change_pct > 0 ? "up" : item.change_pct < 0 ? "down" : "flat";
+  const goingUp = item.change_pct > 0;
+  const goingDown = item.change_pct < 0;
   const pct = Math.abs(item.change_pct);
-  const templates = [
-    `${item.name} activity is ${dir} ${pct}% week over week, according to data tracked by CyberIntelEngine. The overall trend for this category remains ${item.trend}. https://cyberintelengine.com`,
-    `Week-over-week change in ${item.name.toLowerCase()} reports: ${dir} ${pct}%. This category is currently rated ${item.risk_level} risk with a ${item.trend} long-term trend. https://cyberintelengine.com`,
-  ];
+  const name = item.name || "";
+  const trend = item.trend || "";
+  const risk = item.risk_level || "";
+
+  const templates = [];
+
+  if (goingUp) {
+    templates.push(
+      `${name} reports are up ${pct}% compared to last week. This category is rated ${risk} risk with a ${trend} long-term trend. The week-over-week increase is consistent with what the data has been showing.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+    templates.push(
+      `A ${pct}% jump in ${name.toLowerCase()} activity this week. The ${trend} long-term trend continues. Worth paying attention to if you work in fraud prevention or just want to avoid becoming a data point.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  } else if (goingDown) {
+    templates.push(
+      `${name} activity dropped ${pct}% week over week. Good news, though the overall trend for this category remains ${trend}. A single quiet week does not mean the problem is solved.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+    templates.push(
+      `${pct}% decline in ${name.toLowerCase()} reports this week compared to last. The long-term trend is still ${trend}. One week of lower numbers is not a pattern yet.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  } else {
+    templates.push(
+      `${name} activity is flat compared to last week. No change in volume. The long-term trend for this category remains ${trend}, rated ${risk} risk.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+    templates.push(
+      `No significant change in ${name.toLowerCase()} reports this week. Volume is holding steady. The broader trend remains ${trend}.\n\nhttps://cyberintelengine.com\n\n#CyberFraud #ScamAlert`
+    );
+  }
+
   return templates[Math.floor(Math.random() * templates.length)];
 }
 

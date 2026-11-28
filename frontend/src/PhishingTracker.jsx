@@ -45,13 +45,37 @@ function buildPhishingTweet(entry) {
   const domain = entry.domain || "";
   const country = entry.hosting_country_name || "";
   const source = entry.source || "";
+  const srcName = source === "phishtank" ? "PhishTank" : source === "phishunt" ? "Phishunt" : source === "urlhaus" ? "URLhaus" : "threat intelligence feeds";
+  const hasBrand = brand && brand !== "Unknown";
+  const hasCountry = !!country;
 
-  const templates = [
-    `A phishing page impersonating ${brand} has been detected at ${domain}.${country ? ` The site is hosted in ${country}.` : ""} Verified by ${source === "phishtank" ? "PhishTank" : source === "phishunt" ? "Phishunt" : "URLhaus"}. Check any suspicious link before you click. https://cyberintelengine.com`,
-    `${domain} is serving a phishing page targeting ${brand} users.${country ? ` Hosted in ${country}.` : ""} The domain is currently flagged as malicious across multiple threat intelligence feeds. https://cyberintelengine.com`,
-    `Phishing alert: ${domain} is impersonating ${brand}.${country ? ` The infrastructure is located in ${country}.` : ""} If you received a link to this domain, do not enter your credentials. https://cyberintelengine.com`,
-    `Another ${brand} phishing page spotted in the wild. The domain ${domain} was recently registered and is already serving a credential harvesting page.${country ? ` Hosted in ${country}.` : ""} https://cyberintelengine.com`,
-  ];
+  const templates = [];
+
+  if (hasBrand && hasCountry) {
+    templates.push(
+      `Fresh ${brand} phishing page at ${domain}, hosted in ${country}. The domain is flagged by ${srcName} and appears to be harvesting login credentials. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `Someone stood up a fake ${brand} login page at ${domain}. Infrastructure is in ${country}. If this domain showed up in your inbox, it is not what it claims to be. https://cyberintelengine.com #Phishing #InfoSec`,
+      `${domain} is impersonating ${brand}. Hosting traced to ${country}. The page is designed to capture credentials and was flagged by ${srcName}. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `A credential harvesting page targeting ${brand} customers went live at ${domain}. The site is running out of ${country} and has been confirmed malicious by ${srcName}. https://cyberintelengine.com #Phishing #InfoSec`,
+    );
+  } else if (hasBrand) {
+    templates.push(
+      `${domain} is running a fake ${brand} login page. The site was recently registered and is already flagged as malicious by ${srcName}. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `New credential harvesting page targeting ${brand} users at ${domain}. Confirmed by ${srcName}. If you got a link pointing here, don't use it. https://cyberintelengine.com #Phishing #InfoSec`,
+      `A phishing page spoofing ${brand} has appeared at ${domain}. It is designed to steal login credentials. The domain is flagged across multiple threat feeds. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `${brand} users should be aware that ${domain} is serving a fake login page. The site showed up recently and is already on threat intelligence blocklists. https://cyberintelengine.com #Phishing #InfoSec`,
+    );
+  } else if (hasCountry) {
+    templates.push(
+      `Malicious domain ${domain} is hosting a phishing page out of ${country}. Currently flagged by ${srcName}. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `${domain}, hosted in ${country}, has been flagged for serving phishing content. The domain appeared recently and is already on blocklists via ${srcName}. https://cyberintelengine.com #Phishing #InfoSec`,
+    );
+  } else {
+    templates.push(
+      `${domain} has been flagged as a phishing site by ${srcName}. The domain is serving content designed to steal credentials. https://cyberintelengine.com #Phishing #CyberSecurity`,
+      `Phishing infrastructure detected at ${domain}. The site is confirmed malicious across threat intelligence feeds. https://cyberintelengine.com #Phishing #InfoSec`,
+    );
+  }
 
   return templates[Math.floor(Math.random() * templates.length)];
 }
@@ -60,11 +84,13 @@ function buildStatsTweet(stats) {
   const topBrand = stats.top_brands?.[0]?.brand || "Unknown";
   const topBrandCount = stats.top_brands?.[0]?.count || 0;
   const topCountry = stats.top_hosting_countries?.[0]?.country || "Unknown";
+  const secondBrand = stats.top_brands?.[1]?.brand || "";
 
   const templates = [
-    `CyberIntelEngine is currently tracking ${stats.total} active phishing sites across multiple intelligence feeds. ${stats.recent_24h} were detected in the past 24 hours alone. The most impersonated brand right now is ${topBrand} with ${topBrandCount} active phishing pages. https://cyberintelengine.com`,
-    `${stats.recent_24h} new phishing sites detected in the last 24 hours. ${topBrand} remains the most impersonated brand with ${topBrandCount} active fake pages. Most phishing infrastructure is currently hosted in ${topCountry}. https://cyberintelengine.com`,
-    `Phishing landscape right now: ${stats.total} active sites tracked, ${stats.recent_24h} new in 24 hours. ${topBrand} is the top target. ${topCountry} hosts more phishing infrastructure than any other country at the moment. https://cyberintelengine.com`,
+    `${stats.recent_24h} new phishing sites went live in the past 24 hours. ${topBrand} is the most impersonated brand right now with ${topBrandCount} active fake pages. Most of the infrastructure is hosted in ${topCountry}. Full data at https://cyberintelengine.com #Phishing #CyberSecurity`,
+    `We are tracking ${stats.total} active phishing sites right now. ${topBrand} leads the target list${secondBrand ? `, followed by ${secondBrand}` : ""}. ${topCountry} hosts more phishing infrastructure than any other country in the current dataset. https://cyberintelengine.com #Phishing #InfoSec`,
+    `${stats.total} phishing sites. ${stats.recent_24h} of them appeared in the last day. ${topBrand} remains the brand attackers impersonate most often, and ${topCountry} remains the top hosting country. The numbers keep climbing. https://cyberintelengine.com #Phishing #CyberSecurity`,
+    `Today's phishing numbers: ${stats.total} active sites tracked across multiple threat feeds, ${stats.recent_24h} new in 24 hours. ${topBrand} accounts for ${topBrandCount} of those pages. Most of the hosting runs through ${topCountry}. https://cyberintelengine.com #Phishing #InfoSec`,
   ];
 
   return templates[Math.floor(Math.random() * templates.length)];
@@ -468,8 +494,13 @@ export function PhishingTracker() {
                 <div style={{ marginTop: 8 }}>
                   <button onClick={(e) => {
                     e.stopPropagation();
-                    const tweet = `${b.brand} is currently being impersonated by ${b.count} active phishing sites tracked by CyberIntelEngine. If you receive any email or message asking you to log into ${b.brand}, verify the URL carefully before entering your credentials. https://cyberintelengine.com`;
-                    copyTweet(tweet, `brand-${i}`);
+                    const brandTemplates = [
+                      `${b.count} active phishing sites are currently impersonating ${b.brand}, according to data tracked by CyberIntelEngine. That makes ${b.brand} one of the most targeted brands in the current phishing landscape. https://cyberintelengine.com #Phishing #CyberSecurity`,
+                      `${b.brand} has ${b.count} active phishing pages targeting its users right now. If you receive a login link claiming to be from ${b.brand}, go directly to the official site instead of clicking through. https://cyberintelengine.com #Phishing #InfoSec`,
+                      `Attackers are running ${b.count} fake ${b.brand} pages at the moment. The scale of ${b.brand} impersonation continues to grow. Full phishing intelligence at https://cyberintelengine.com #Phishing #CyberSecurity`,
+                      `Right now, there are ${b.count} phishing sites pretending to be ${b.brand}. Each one is designed to steal credentials from people who don't look closely at the URL. https://cyberintelengine.com #Phishing #InfoSec`,
+                    ];
+                    copyTweet(brandTemplates[Math.floor(Math.random() * brandTemplates.length)], `brand-${i}`);
                   }}
                     style={{ padding: "4px 10px", borderRadius: 5, fontSize: 11, fontWeight: 600, border: `1px solid ${copiedIndex === `brand-${i}` ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === `brand-${i}` ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === `brand-${i}` ? "#51cf66" : "var(--text-secondary)", cursor: "pointer", width: "100%" }}>
                     {copiedIndex === `brand-${i}` ? "Copied!" : "Copy Tweet"}

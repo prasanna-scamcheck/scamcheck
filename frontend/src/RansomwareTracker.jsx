@@ -932,17 +932,50 @@ export function RansomwareTracker() {
   const [kevLimit, setKevLimit] = useState(50);
   const [expandedKev, setExpandedKev] = useState(null);
 
-  /* ── reusable tweet generator ── */
+  /* ── reusable tweet generator (Krebs/Cluley voice) ── */
   const buildVictimTweet = (v) => {
-    const dataPart = v.data_size ? ` with approximately ${v.data_size} of data` : "";
-    const countryPart = v.country_name ? ` in ${v.country_name}` : "";
-    const sectorPart = v.activity && v.activity !== "Not Found" ? ` (${v.activity} sector)` : "";
-    const templates = [
-      `${v.group_name} has claimed an attack on ${v.victim}${countryPart}${sectorPart}${dataPart}.\n\nNo organization is immune. Stay informed, stay prepared.\n\nTrack live: https://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`,
-      `${v.victim}${countryPart} has been listed on ${v.group_name}'s leak site.${dataPart ? `\n\nReported data exposure: ${v.data_size}.` : ""}\n\nPatch your systems. Back up your data. Today, not tomorrow.\n\nhttps://cyberintelengine.com\n\n#InfoSec #Ransomware`,
-      `${v.group_name} targets ${v.victim}${countryPart}${dataPart}.\n\n${v.activity && v.activity !== "Not Found" ? `The ${v.activity} sector continues to face threats. ` : ""}Review your incident response plans now.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #ThreatIntel`,
-      `New ransomware claim detected:\n\nGroup: ${v.group_name}\nTarget: ${v.victim}${v.country_name ? `\nCountry: ${v.country_name}` : ""}${v.data_size ? `\nData: approximately ${v.data_size}` : ""}${v.activity && v.activity !== "Not Found" ? `\nSector: ${v.activity}` : ""}\n\nTrack all claims live:\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
-    ];
+    const g = v.group_name || "Unknown";
+    const victim = v.victim || "an unnamed organization";
+    const country = v.country_name || "";
+    const sector = v.activity && v.activity !== "Not Found" ? v.activity : "";
+    const size = v.data_size || "";
+
+    const templates = [];
+
+    if (size && country && sector) {
+      templates.push(
+        `${g} listed ${victim} on its leak site. ${country}-based ${sector.toLowerCase()} company, roughly ${size} of data reportedly taken.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+        `${size} of data. That is what ${g} claims to have taken from ${victim}, a ${sector.toLowerCase()} firm in ${country}. The data is now listed on the group's leak site.\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+        `The ${sector.toLowerCase()} sector takes another hit. ${g} says it has exfiltrated ${size} from ${victim} in ${country}. The claim appeared on the group's dark web portal earlier today.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+      );
+    } else if (size && country) {
+      templates.push(
+        `${g} claims to have stolen ${size} of data from ${victim} in ${country}. The listing appeared on the group's leak site.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+        `${victim} in ${country} has appeared on ${g}'s leak site. The group says it took ${size} of data.\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+      );
+    } else if (size) {
+      templates.push(
+        `${g} says it stole ${size} of data from ${victim}. The claim is now on the group's leak site.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+      );
+    } else if (country && sector) {
+      templates.push(
+        `${victim}, a ${sector.toLowerCase()} organization in ${country}, has been listed on ${g}'s leak site.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+        `Another ${sector.toLowerCase()} target. ${g} has added ${victim} in ${country} to its dark web leak portal.\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+      );
+    } else if (country) {
+      templates.push(
+        `${victim} in ${country} has shown up on ${g}'s leak site. No word yet from the company.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+      );
+    }
+
+    // Fallback templates that always work regardless of available data
+    templates.push(
+      `${g} added ${victim} to its leak site.${country ? ` Based in ${country}.` : ""}${size ? ` The group claims ${size} of data.` : ""}${sector ? ` Sector: ${sector}.` : ""}\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+      `New listing on ${g}'s leak site: ${victim}.${country ? ` ${country}.` : ""}${size ? ` Claimed data: ${size}.` : ""} The company has not publicly commented.\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+      `${victim} is the latest name to appear on the ${g} ransomware group's dark web portal.${country ? ` The organization is based in ${country}.` : ""}${size ? ` Alleged data theft: ${size}.` : ""}\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+      `${g} is claiming another victim. ${victim}${country ? ` (${country})` : ""} now appears on the group's leak page.${size ? ` Reported exfiltration: ${size}.` : ""}\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+    );
+
     return templates[Math.floor(Math.random() * templates.length)];
   };
 
@@ -1604,9 +1637,10 @@ export function RansomwareTracker() {
                                 <button
                                   onClick={() => {
                                     const kevTemplates = [
-                      `${entry.cve_id} affecting ${entry.vendor} ${entry.product} is listed on CISA's Known Exploited Vulnerabilities catalog.${entry.ransomware_use ? "\n\nThis vulnerability is actively used in ransomware campaigns." : ""}\n\n${entry.name}\n\nPatch now. Don't wait.\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #CISA #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
-                      `CISA has flagged ${entry.cve_id} (${entry.vendor} ${entry.product}) as actively exploited in the wild.${entry.ransomware_use ? " Known ransomware groups are leveraging this vulnerability." : ""}\n\nIs your organization patched?\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #PatchNow #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
-                      `${entry.name}\n\n${entry.cve_id} in ${entry.vendor} ${entry.product} is being actively exploited.${entry.ransomware_use ? " Ransomware groups are known to use this." : ""}\n\nCheck your exposure. Patch today.\n\nhttps://cyberintelengine.com\n\n#InfoSec #CISA #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `${entry.cve_id} in ${entry.vendor} ${entry.product} is on CISA's actively exploited list. A patch exists.${entry.ransomware_use ? " Multiple ransomware groups have been observed using this vulnerability as an entry point." : ""}\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `CISA has confirmed active exploitation of ${entry.cve_id}, a vulnerability in ${entry.vendor} ${entry.product}.${entry.ransomware_use ? " It is a known vector for ransomware deployment." : ""} Organizations running unpatched instances are exposed right now.\n\nhttps://cyberintelengine.com\n\n#InfoSec #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `How many ${entry.vendor} ${entry.product} instances are still unpatched against ${entry.cve_id}? CISA added it to the Known Exploited Vulnerabilities catalog because attackers are actively using it.${entry.ransomware_use ? " Ransomware operators among them." : ""}\n\nhttps://cyberintelengine.com\n\n#CyberSecurity #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
+                      `${entry.cve_id}. ${entry.vendor} ${entry.product}. Actively exploited in the wild, per CISA.${entry.ransomware_use ? " Known to be used in ransomware campaigns." : ""} If you haven't patched, the window is closing.\n\nhttps://cyberintelengine.com\n\n#InfoSec #KEV${entry.ransomware_use ? " #Ransomware" : ""}`,
                     ];
                     const tweet = kevTemplates[Math.floor(Math.random() * kevTemplates.length)];
                                     navigator.clipboard.writeText(tweet).then(() => {
@@ -1874,8 +1908,14 @@ export function RansomwareTracker() {
               const groups = dashboard?.top_groups?.length || 0;
               const countries = dashboard?.all_countries?.length || 0;
               const topGroup = dashboard?.top_groups?.[0]?.name || "Unknown";
-              const tweet = `Global ransomware snapshot:\n\n${total}+ victims tracked recently\n${groups} active ransomware groups\n${countries} countries affected\nMost active group: ${topGroup}\n\nReal-time tracking and threat intelligence at:\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity #ThreatIntel`;
-              copyTweet(tweet, "analytics");
+              const topCountry = dashboard?.all_countries?.[0]?.name || "";
+              const analyticsTemplates = [
+                `${total} ransomware victims across ${countries} countries in the current tracking window. ${topGroup} is the most active group right now. The numbers are worth watching.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+                `${groups} ransomware groups actively claiming victims. ${countries} countries affected. ${topGroup} leads the count.${topCountry ? ` ${topCountry} remains the most targeted nation.` : ""}\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+                `The ransomware landscape right now: ${total}+ recent victims, ${groups} active groups, ${countries} countries hit. ${topGroup} continues to outpace every other operation in volume.\n\nhttps://cyberintelengine.com\n\n#Ransomware #CyberSecurity`,
+                `${topGroup} is currently the most prolific ransomware operation by victim count. Across all tracked groups, ${total}+ organizations in ${countries} countries have been listed on leak sites recently.\n\nhttps://cyberintelengine.com\n\n#Ransomware #InfoSec`,
+              ];
+              copyTweet(analyticsTemplates[Math.floor(Math.random() * analyticsTemplates.length)], "analytics");
             }}
               style={{ padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600, border: `1px solid ${copiedIndex === "analytics" ? "rgba(81,207,102,0.4)" : "var(--border)"}`, background: copiedIndex === "analytics" ? "rgba(81,207,102,0.1)" : "var(--bg-secondary)", color: copiedIndex === "analytics" ? "#51cf66" : "var(--text-secondary)", cursor: "pointer" }}>
               {copiedIndex === "analytics" ? "✓ Copied!" : "📋 Share Stats Tweet"}

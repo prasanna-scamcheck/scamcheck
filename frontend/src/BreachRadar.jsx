@@ -54,14 +54,82 @@ function buildBreachTweet(breach) {
   const count = breach.pwn_count || 0;
   const countStr = formatCount(count);
   const dateStr = breach.breach_date || "";
+  const year = dateStr ? dateStr.slice(0, 4) : "";
   const dataTypes = (breach.data_classes || []).slice(0, 3).join(", ");
+  const isSensitive = breach.is_sensitive;
+  const isVerified = breach.is_verified;
+  const industry = breach.industry || "";
 
-  const templates = [
-    `The ${name} data breach${domain ? ` (${domain})` : ""} exposed ${countStr} records.${dataTypes ? ` Compromised data includes ${dataTypes}.` : ""}${dateStr ? ` The breach occurred in ${dateStr}.` : ""} Check your exposure at https://cyberintelengine.com`,
-    `${countStr} accounts were compromised in the ${name} breach.${domain ? ` The affected service is ${domain}.` : ""}${dataTypes ? ` Exposed data types: ${dataTypes}.` : ""} If you used this service, change your passwords now. https://cyberintelengine.com`,
-    `${name} breach: ${countStr} records exposed${dateStr ? `, dating back to ${dateStr}` : ""}.${dataTypes ? ` The leaked data includes ${dataTypes}.` : ""} Users of ${domain || "the affected service"} should review their account security. https://cyberintelengine.com`,
-    `A breach at ${domain || name} has exposed ${countStr} user records to the public.${dataTypes ? ` The dataset includes ${dataTypes}.` : ""} Anyone who has used this service should assume their data is compromised. https://cyberintelengine.com`,
-  ];
+  const templates = [];
+
+  // Lead with record count
+  templates.push(
+    `${countStr} records. That is how many accounts were exposed in the ${name} breach${domain ? ` at ${domain}` : ""}.${dataTypes ? ` The leaked dataset includes ${dataTypes}.` : ""}${year ? ` The breach dates back to ${year}.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+  );
+
+  // Lead with the service name
+  if (domain) {
+    templates.push(
+      `${name} suffered a breach that exposed ${countStr} user records.${dataTypes ? ` Among the compromised data: ${dataTypes}.` : ""}${year ? ` It happened in ${year}, but the data is still circulating.` : ""} If you ever had an account on ${domain}, your credentials may be in the wild.\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`
+    );
+  }
+
+  // Lead with data types
+  if (dataTypes) {
+    templates.push(
+      `${dataTypes}. All of it exposed in the ${name} breach, affecting ${countStr} accounts.${domain ? ` The service involved: ${domain}.` : ""}${year ? ` Breach date: ${year}.` : ""} If you reused that password anywhere else, that is where the real risk is.\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+    );
+  }
+
+  // Lead with the date
+  if (year) {
+    templates.push(
+      `In ${year}, ${name} was breached. ${countStr} records were exposed${domain ? ` from ${domain}` : ""}.${dataTypes ? ` The data included ${dataTypes}.` : ""} Years later, this data still turns up in credential stuffing attacks.\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`
+    );
+  }
+
+  // Question format
+  templates.push(
+    `Ever had an account on ${domain || name}? The service was breached${year ? ` in ${year}` : ""}, exposing ${countStr} records.${dataTypes ? ` What leaked: ${dataTypes}.` : ""} Worth checking whether you are in this one.\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+  );
+
+  // Sensitive breach angle
+  if (isSensitive) {
+    templates.push(
+      `The ${name} breach is classified as sensitive, meaning the exposed data could cause real harm beyond just a password reset. ${countStr} accounts affected.${dataTypes ? ` Leaked data includes ${dataTypes}.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #Privacy`
+    );
+  }
+
+  // Industry angle
+  if (industry) {
+    templates.push(
+      `Another breach in the ${industry.toLowerCase()} sector. ${name}${domain ? ` (${domain})` : ""} lost ${countStr} records${year ? ` in ${year}` : ""}.${dataTypes ? ` Exposed: ${dataTypes}.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+    );
+  }
+
+  // Verified angle
+  if (isVerified) {
+    templates.push(
+      `${name} has been verified as a legitimate breach. ${countStr} records confirmed exposed${domain ? ` from ${domain}` : ""}.${dataTypes ? ` The dataset contains ${dataTypes}.` : ""}${year ? ` Breach date: ${year}.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`
+    );
+  }
+
+  // Short, punchy
+  templates.push(
+    `${name}. ${countStr} records.${dataTypes ? ` ${dataTypes}.` : ""}${year ? ` ${year}.` : ""} The data is out there.${domain ? ` If you used ${domain}, assume your information is compromised.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+  );
+
+  // Credential reuse angle
+  templates.push(
+    `The ${name} breach put ${countStr} records into the hands of anyone who knows where to look.${dataTypes ? ` What was exposed: ${dataTypes}.` : ""} The real damage happens when people reuse the same password across services.\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`
+  );
+
+  // Circulating data angle
+  if (domain) {
+    templates.push(
+      `Breach data from ${domain} (${name}) is publicly available. ${countStr} accounts affected.${dataTypes ? ` The leak includes ${dataTypes}.` : ""} This kind of data feeds credential stuffing, phishing, and identity fraud for years after the initial incident.\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`
+    );
+  }
 
   return templates[Math.floor(Math.random() * templates.length)];
 }
@@ -73,9 +141,10 @@ function buildStatsTweet(stats) {
   const topBreach = stats.largest_breaches?.[0];
 
   const templates = [
-    `CyberIntelEngine now tracks ${total} known data breaches, exposing a combined ${records} records. ${recent} new breaches were added in the last 90 days.${topBreach ? ` The largest on record is ${topBreach.name} with ${topBreach.pwn_count_formatted} accounts.` : ""} https://cyberintelengine.com`,
-    `${total} data breaches. ${records} compromised records. ${recent} breaches added in the past three months alone. The scale of exposed personal data continues to grow. Search your exposure at https://cyberintelengine.com`,
-    `The breach landscape in numbers: ${total} known breaches tracked, ${records} total records exposed, ${recent} added in the last 90 days.${topBreach ? ` ${topBreach.name} remains the largest single breach at ${topBreach.pwn_count_formatted} records.` : ""} https://cyberintelengine.com`,
+    `${records} records exposed across ${total} known data breaches. ${recent} of those breaches were added in the last 90 days alone.${topBreach ? ` The single largest: ${topBreach.name}, at ${topBreach.pwn_count_formatted} accounts.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`,
+    `${recent} data breaches added to the catalog in the past three months. The running total now stands at ${total} breaches and ${records} compromised records.${topBreach ? ` ${topBreach.name} still holds the record at ${topBreach.pwn_count_formatted}.` : ""}\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`,
+    `How big is the breach problem? ${total} confirmed breaches tracked. ${records} records exposed in total. And ${recent} new incidents cataloged in just the last 90 days. The number only goes in one direction.\n\nhttps://cyberintelengine.com\n\n#DataBreach #CyberSecurity`,
+    `${total} breaches. ${records} exposed records.${topBreach ? ` The largest single incident, ${topBreach.name}, accounts for ${topBreach.pwn_count_formatted} of them.` : ""} Every one of these records belongs to a real person. ${recent} more breaches were added in the past quarter.\n\nhttps://cyberintelengine.com\n\n#DataBreach #InfoSec`,
   ];
 
   return templates[Math.floor(Math.random() * templates.length)];
